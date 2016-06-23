@@ -1,0 +1,22 @@
+HOSTS:
+  server:
+    roles:
+      - server
+      - master
+    platform:   el-7-x86_64
+    box:        puppetlabs/centos-7.2-64-nocm
+    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.2-64-nocm
+    hypervisor: vagrant
+  client:
+    roles:
+      - client
+      - agent
+      - default
+    platform:   el-7-x86_64
+    box:        puppetlabs/centos-7.2-64-nocm
+    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.2-64-nocm
+    hypervisor: vagrant
+CONFIG:
+  log_level: verbose
+  type:      foss
+  vagrant_memsize: 256

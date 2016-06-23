@@ -1,0 +1,45 @@
+{
+  "name":    "simp-simp_grafana",
+  "version": "0.1.0",
+  "author":  "simp",
+  "summary": "A profile module to integrate Grafana with SIMP",
+  "license": "Apache-2.0",
+  "source":  "https://github.com/simp/pupmod-simp-grafana.git",
+  "project_page": "https://github.com/simp/pupmod-simp-grafana",
+  "issues_url":   "https://simp-project.atlassian.net",
+  "tags": [ "simp" ],
+  "dependencies": [
+	{
+      "name": "bfraser-grafana",
+      "version_requirement": ">= 2.5.0 < 3.0.0"
+    },
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.1.0 < 6.0.0"
+    },
+    {
+      "name": "simp-iptables",
+      "version_requirement": ">= 4.1.0 < 6.0.0"
+    },
+    {
+      "name": "simp-simplib",
+      "version_requirement": ">= 1.0.0 < 6.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    }
+  ]
+}
