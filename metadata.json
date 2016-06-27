@@ -9,20 +9,24 @@
   "issues_url":   "https://simp-project.atlassian.net",
   "tags": [ "simp" ],
   "dependencies": [
-	{
-      "name": "bfraser-grafana",
+  {
+      "name": "bfraser/grafana",
       "version_requirement": ">= 2.5.0 < 3.0.0"
     },
     {
-      "name": "puppetlabs-stdlib",
+      "name": "puppetlabs/stdlib",
       "version_requirement": ">= 4.1.0 < 6.0.0"
     },
     {
-      "name": "simp-iptables",
+      "name": "simp/iptables",
       "version_requirement": ">= 4.1.0 < 6.0.0"
     },
+	{
+      "name": "simp/pki",
+	  "version_requirement": ">= 4.2.3 < 6.0.0"
+	},
     {
-      "name": "simp-simplib",
+      "name": "simp/simplib",
       "version_requirement": ">= 1.0.0 < 6.0.0"
     }
   ],

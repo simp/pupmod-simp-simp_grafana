@@ -1,0 +1,191 @@
+|License| |Build Status| |SIMP compatibility|
+
+Table of Contents
+-----------------
+
+1. `Module Description - What the module does and why it is
+   useful <#module-description>`__
+2. `Setup - The basics of getting started with simp\_grafana <#setup>`__
+
+   -  `What simp\_grafana affects <#what-simp_grafana-affects>`__
+   -  `Setup requirements <#setup-requirements>`__
+   -  `Beginning with simp\_grafana <#beginning-with-simp_grafana>`__
+
+3. `Usage - Configuration options and additional
+   functionality <#usage>`__
+4. `Reference - An under-the-hood peek at what the module is doing and
+   how <#reference>`__
+5. `Limitations - OS compatibility, etc. <#limitations>`__
+6. `Development - Guide for contributing to the module <#development>`__
+
+   -  `Acceptance Tests - Beaker env variables <#acceptance-tests>`__
+
+Module Description
+------------------
+
+`Grafana <http://grafana.org/>`__ is a web-based metric and analytics display
+tool, frequently used for log analysis. This module acts as a SIMP wrapper (or
+"profile") for the Puppet, Inc. Approved Grafana module written and maintained
+by Bill Fraser. It sets a baseline of secure defaults and integrates Grafana
+with other SIMP components.
+
+This is a SIMP module
+---------------------
+
+This module is a component of the
+`System Integrity Management Platform <https://github.com/NationalSecurityAgency/SIMP>`__,
+a compliance-management framework built on Puppet.
+
+If you find any issues, they can be submitted to our
+`JIRA <https://simp-project.atlassian.net/>`__.
+
+Please read our
+`Contribution Guide <https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP>`__
+and visit our
+`developer wiki <https://simp-project.atlassian.net/wiki/display/SD/SIMP+Development+Home>`__.
+
+This module is optimally designed for use within a larger SIMP ecosystem, but
+it can be used independently:
+
+-  As a SIMP wrapper module, the defaults use the larger SIMP ecosystem to
+   manage security compliance settings from the Puppet server.
+
+-  If used independently, all SIMP-managed security subsystems may be disabled
+   via the ``enable_firewall`` and ``enable_pki`` settings.
+
+.. note::
+  If SIMP integration is not required, use of this module is discouraged;
+  direct use of the component Grafana module is advised.
+
+Setup
+-----
+
+What simp\_grafana affects
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+-  The Grafana package
+-  IPTables rules
+-  Linux Capabilities for the Grafana server daemon
+-  PKI certificates in Grafana's ``/etc/grafana`` directory
+
+Setup Requirements
+^^^^^^^^^^^^^^^^^^
+
+Because this is a SIMP profile module, it assumes basic SIMP components are
+already deployed. Namely, it requires the
+`IPTables <https://github.com/simp/pupmod-simp-iptables>`__ and
+`PKI <https://github.com/simp/pupmod-simp-pki>`__ modules. Setup of those
+modules is beyond the scope of this document. Please see the component
+documentation for more details.
+
+Beginning with simp\_grafana
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Assuming SIMP is deployed, and an Internet connection is available to
+download the package files to the intended Grafana server, use of this
+module should be as simple as ``include '::simp_grafana'``.
+
+Usage
+-----
+
+Aside from the few "passthrough" parameters, any parameter in the
+component ``::grafana`` class may be overloaded via Hiera. For example,
+the install method may be changed like this:
+
+.. code:: yaml
+
+    ---
+    grafana::install_method: 'package'
+
+Network-isolated Setup
+^^^^^^^^^^^^^^^^^^^^^^
+
+If an Internet connection is not available, or if review of the package
+files is desired, the ``package_source`` parameter to the component
+Grafana module may be set. It takes a String that is valid for the
+target package provider. For example, Yum can take URLs like
+``http://example.com/path/to/rpm`` or ``file:///path/to/rpm``. If a
+local HTTP server is unavailable, the file may be installed via Puppet
+to a temporary directory. Here is an example:
+
+.. code:: puppet
+
+    # Manifest
+
+    include '::simp_grafana'
+
+    file { '/tmp/grafana_package.rpm':
+      ensure => file,
+      source => 'puppet:///modules/files/rpms/grafana_package.rpm',
+      before => Class['simp_grafana'],
+    }
+
+.. code:: yaml
+
+    # Hiera data
+    ---
+    grafana::package_source: 'file:///tmp/grafana_package.rpm'
+
+Reference
+---------
+
+Please see the header content in `manifests/init.pp <manifest/init.pp>`__ for
+the most up-to-date documentation. (We'll populate this section once we can
+automate it.)
+
+Limitations
+-----------
+
+This module has only been tested on CentOS 7 and Red Hat Enterprise Linux 7.
+
+Development
+-----------
+
+Please see the
+`SIMP Contribution Guidelines <https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP>`__.
+
+Acceptance tests
+^^^^^^^^^^^^^^^^
+
+To run the system tests, you need `Vagrant <https://www.vagrantup.com/>`__
+installed. Then, run:
+
+.. code:: shell
+
+    bundle exec rake beaker:suites
+
+Some environment variables may be useful:
+
+.. code:: shell
+
+    BEAKER_debug=true
+    BEAKER_provision=no
+    BEAKER_destroy=no
+    BEAKER_use_fixtures_dir_for_modules=yes
+    BEAKER_fips=yes
+    BEAKER_spec_prep=no
+
+-  ``BEAKER_debug``: show the commands being run on the STU and their output.
+-  ``BEAKER_destroy=no``: prevent the machine destruction after the tests
+   finish so you can inspect the state.
+-  ``BEAKER_provision=no``: prevent the machine from being recreated.  This can
+   save a lot of time while you're writing the tests.
+-  ``BEAKER_use_fixtures_dir_for_modules=yes``: cause all module dependencies
+   to be loaded from the ``spec/fixtures/modules`` directory, based on the
+   contents of ``.fixtures.yml``. The contents of this directory are usually
+   populated by ``bundle exec rake spec_prep``. This can be used to run
+   acceptance tests to run on isolated networks.
+-  ``BEAKER_fips=yes``: enable FIPS-mode on the virtual instances. This can
+   take a very long time, because it must enable FIPS in the kernel
+   command-line, rebuild the initramfs, then reboot.
+-  ``BEAKER_spec_prep=no``: don't populate ``spec/fixtures/modules/`` prior to
+   executing the test suite. This can save time on subsequent runs when using
+   ``BEAKER_destroy=no BEAKER_provision=no``, however changes to the fixture
+   modules will not take effect.
+
+.. |License| image:: http://img.shields.io/license-apache-blue.svg
+   :target: http://www.apache.org/licenses/LICENSE-2.0.html
+.. |Build Status| image:: https://travis-ci.org/simp/pupmod-simp-simp_grafana.svg
+   :target: https://travis-ci.org/simp/pupmod-simp-simp_grafana
+.. |SIMP compatibility| image:: https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg
+   :target: https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg

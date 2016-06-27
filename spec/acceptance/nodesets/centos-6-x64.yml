@@ -2,75 +2,73 @@ HOSTS:
   simp-server:
     roles:
       - simp_server
-      - server
       - master
-    platform: el-7-x86_64
+    platform: el-6-x86_64
     hypervisor: vagrant
-    box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
+    box: puppetlabs/centos-6.6-64-nocm
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-nocm
     vagrant_memsize: 2048
     yum_repos:
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+          - https://getfedora.org/static/0608B895.txt
       simp:
-        url: https://dl.bintray.com/simp/5.1.X
+        url: https://dl.bintray.com/simp/4.2.X
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
           - https://getfedora.org/static/352C64E5.txt
-
   grafana:
     roles:
       - simp_client
       - agent
       - grafana
       - default
-    platform: el-7-x86_64
+    platform: el-6-x86_64
     hypervisor: vagrant
-    box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
+    box: puppetlabs/centos-6.6-64-nocm
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-nocm
     yum_repos:
       grafana:
-        url: https://packagecloud.io/grafana/stable/el/7/$basearch
+        url: https://packagecloud.io/grafana/stable/el/6/$basearch
         gpgkeys:
           - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+          - https://getfedora.org/static/0608B895.txt
       pcloud:
-        url: https://packagecloud.io/simp-project/5_1_X_Dependencies/el/7/$basearch
+        url: https://packagecloud.io/simp-project/4_2_X_Dependencies/el/6/$basearch
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
           - https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
           - https://getfedora.org/static/352C64E5.txt
       simp:
-        url: https://dl.bintray.com/simp/5.1.X
+        url: https://dl.bintray.com/simp/4.2.X
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-          - https://getfedora.org/static/352C64E5.txt
+          - https://getfedora.org/static/0608B895.txt
 
   elasticsearch-server:
     roles:
       - simp_client
       - agent
       - elasticsearch_server
-    platform: el-7-x86_64
+    platform: el-6-x86_64
     hypervisor: vagrant
-    box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
+    box: puppetlabs/centos-6.6-64-nocm
+    box_url: https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-nocm
     vagrant_memsize: 1024
     yum_repos:
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+          - https://getfedora.org/static/0608B895.txt
       simp:
-        url: https://dl.bintray.com/simp/5.1.X
+        url: https://dl.bintray.com/simp/4.2.X
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-          - https://getfedora.org/static/352C64E5.txt
+          - https://getfedora.org/static/0608B895.txt
       elasticsearch:
         url: https://packages.elastic.co/elasticsearch/2.x/centos
         gpgkeys:

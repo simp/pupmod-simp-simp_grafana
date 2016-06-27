@@ -1,0 +1,79 @@
+# Defines a service account for Grafana to do account and group lookups
+dn: uid=grafana,ou=Services,dc=test
+objectclass: account
+objectclass: simpleSecurityObject
+uid: grafana
+userPassword: {SSHA}1VTi6tC2ycHUJMX8m46RkE9m9wtvR4oR
+description: "A simple account that Grafana can use to query for users and groups"
+
+# Defines an administrator who should get full permissions
+dn: uid=testadmin,ou=People,dc=test
+uid: testadmin
+cn: testadmin
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: ldapPublicKey
+loginShell: /bin/bash
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/testadmin
+userPassword: {SSHA}EKiI43vwjpcZuzDXX5N5W9Dw6juav9CS
+givenName: charlie
+sn: admin
+mail: testadmin@test
+
+# Defines a user who should get basic permissions
+dn: uid=testuser-allow,ou=People,dc=test
+uid: testuser-allow
+cn: testuser-allow
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: ldapPublicKey
+loginShell: /bin/bash
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/testuser-allow
+userPassword: {SSHA}Z2dhu0EpfgrJQxRAUbqyXQEm7D+Vs6UO
+givenName: allowed
+sn: user
+mail: testuser-allow@test
+
+# Defines a user who should be denied access
+dn: uid=testuser-deny,ou=People,dc=test
+uid: testuser-deny
+cn: testuser-deny
+objectClass: top
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: inetOrgPerson
+objectClass: ldapPublicKey
+loginShell: /bin/bash
+uidNumber: 1002
+gidNumber: 1002
+homeDirectory: /home/testuser-deny
+userPassword: {SSHA}HMWMQ7fFfhP545jxjzTkNw+vCHYq+ymP
+givenName: denied
+sn: user
+mail: testuser-deny@test
+
+# Defines a POSIX group that should get full administrative privileges
+dn: cn=grafana-admins,ou=Group,dc=test
+objectClass: top
+objectClass: posixGroup
+cn: grafana-admins
+gidNumber: 50000
+description: "Grafana administrators"
+memberUID: testadmin
+
+# Defines a POSIX group that should get basic privileges
+dn: cn=grafana-users,ou=Group,dc=test
+objectClass: top
+objectClass: posixGroup
+cn: grafana-users
+gidNumber: 50001
+description: "Allowed Grafana users"
+memberUID: testuser-allow

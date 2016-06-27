@@ -7,16 +7,16 @@ rvm:
   - 1.8.7
   - 1.9.3
   - 2.0.0
-  - 2.1.0
-  - 2.2.1
+  - 2.1.10
+  - 2.2.5
 script:
     - 'bundle exec rake validate'
     - 'bundle exec rake lint'
-    - 'bundle exec rake spec'
     - 'bundle exec rake metadata'
+    - 'bundle exec rake spec'
 
 env:
-  global: 
+  global:
     - STRICT_VARIABLES=yes
     - TRUSTED_NODE_DATA=yes
   matrix:
@@ -30,19 +30,22 @@ env:
     - PUPPET_VERSION="~> 4.0.0"
     - PUPPET_VERSION="~> 4.1.0"
     - PUPPET_VERSION="~> 4.2.0"
+    - PUPPET_VERSION="~> 4.3.0"
+    - PUPPET_VERSION="~> 4.4.0"
+    - PUPPET_VERSION="~> 4.5.0"
 matrix:
   fast_finish: true
   allow_failures:
     - rvm: 1.8.7
-    - rvm: 2.1.0
-    - rvm: 2.2.1
     - env: PUPPET_VERSION="~> 3.5.0"
     - env: PUPPET_VERSION="~> 3.6.0"
-    - env: PUPPET_VERSION="~> 3.7.0" FUTURE_PARSER=yes
-    - env: PUPPET_VERSION="~> 3.8.0" FUTURE_PARSER=yes
     - env: PUPPET_VERSION="~> 4.0.0"
     - env: PUPPET_VERSION="~> 4.1.0"
-    - env: PUPPET_VERSION="~> 4.2.0"
+
+  include:
+    - rvm: 2.2.5
+      env: PUPPET_VERSION="~> 4.5.0"
+      script: 'bundle exec rake rubocop'
 
   exclude:
   # Ruby 1.8.7
@@ -66,24 +69,24 @@ matrix:
   - rvm: 1.8.7
     env: PUPPET_VERSION="~> 3.8.0" FUTURE_PARSER=yes
 
-  # Ruby 2.1.0
-  - rvm: 2.1.0
+  # Ruby 2.1.10
+  - rvm: 2.1.10
     env: PUPPET_VERSION="~> 3.5.0"
-  - rvm: 2.1.0
+  - rvm: 2.1.10
     env: PUPPET_VERSION="~> 3.6.0"
-  - rvm: 2.1.0
+  - rvm: 2.1.10
     env: PUPPET_VERSION="~> 3.7.0"
 
-  # Ruby 2.2.1
-  - rvm: 2.2.1
+  # Ruby 2.2.5
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.5.0"
-  - rvm: 2.2.1
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.6.0"
-  - rvm: 2.2.1
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.7.0"
-  - rvm: 2.2.1
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.7.0" FUTURE_PARSER=yes
-  - rvm: 2.2.1
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.8.0"
-  - rvm: 2.2.1
+  - rvm: 2.2.5
     env: PUPPET_VERSION="~> 3.8.0" FUTURE_PARSER=yes

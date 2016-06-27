@@ -1,16 +1,6 @@
 simp_grafana - A profile module to integrate Grafana with SIMP
 
-Per Section 105 of the Copyright Act of 1976, these works are not entitled to
-domestic copyright protection under US Federal law.
-
-The US Government retains the right to pursue copyright protections outside of
-the United States.
-
-The United States Government has unlimited rights in this software and all
-derivatives thereof, pursuant to the contracts under which it was developed and
-the License under which it falls.
-
----
+Copyright 2016 Onyx Point, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

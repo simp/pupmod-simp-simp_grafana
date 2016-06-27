@@ -1,0 +1,67 @@
+---
+# Obviously include all other necessary classes for this host. This is only to show
+# some sample site data you may wish to have. If the default configuration works for you,
+# then this won't be needed.
+classes:
+  - simplib
+  - simp::ldap_server
+
+# Eliminate requirements on unnecessary components for testing
+simplib::manage_tmp_perms : false
+
+#
+# ------------------------------------------------------------------------------
+# extra hieradata needed to configure dependencies
+client_nets:
+  - 'ALL'
+use_iptables: true
+
+# ------------------------------------------------------------------------------
+# All LDAP passwords: 123$%^qweRTY
+
+# === ldap::base_dn ===
+# The Base DN of the LDAP server
+"ldap::base_dn": "dc=test"
+
+# === ldap::bind_dn ===
+# LDAP Bind Distinguished Name
+"ldap::bind_dn": "cn=hostAuth,ou=Hosts,%{hiera('ldap::base_dn')}"
+
+# === ldap::bind_pw ===
+# The LDAP bind password
+"ldap::bind_pw": "123$%^qweRTY"
+
+# === ldap::bind_hash ===
+# The salted LDAP bind password hash
+"ldap::bind_hash": "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
+
+# === ldap::sync_dn ===
+#
+"ldap::sync_dn": "cn=LDAPSync,ou=Hosts,%{hiera('ldap::base_dn')}"
+
+# === ldap::sync_pw ===
+# The LDAP sync password
+"ldap::sync_pw": "123$%^qweRTY"
+
+# === ldap::sync_hash ===
+#
+"ldap::sync_hash": "{SSHA}xr8JTXnSdOlqFJfP6tNwDNmGfGKKhdbr"
+
+# === ldap::root_dn ===
+# The LDAP root DN.
+"ldap::root_dn": "cn=LDAPAdmin,ou=People,%{hiera('ldap::base_dn')}"
+
+# === ldap::root_hash ===
+# The LDAP root password hash.
+#  If you set this with simp config, type the password and the hash will be
+# generated for you.'
+"ldap::root_hash": "{SSHA}cbyG41/oc3qhJkUpkrjqz60ZUizBxTHJ"
+
+# === ldap::master ===
+# This is the LDAP master in URI form (ldap://server)
+"ldap::master": "ldap://<%= simp_server.reachable_name %>"
+
+# === ldap::uri ===
+# List of OpenLDAP servers in URI form (ldap://server)
+"ldap::uri":
+    - "ldap://<%= simp_server.reachable_name %>"

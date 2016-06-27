@@ -30,7 +30,6 @@ default_hiera_config = <<-EOM
   :datadir: 'stub'
 :hierarchy:
   - "%{custom_hiera}"
-  - "%{spec_title}"
   - "%{module_name}"
   - 'default'
 EOM
@@ -143,6 +142,10 @@ RSpec.configure do |c|
     # clean up the mocked environmentpath
     FileUtils.rm_rf(@spec_global_env_temp)
     @spec_global_env_temp = nil
+  end
+
+  c.after(:suite) do
+    RSpec::Puppet::Coverage.report!
   end
 end
 

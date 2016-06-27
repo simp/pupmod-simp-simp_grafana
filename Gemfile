@@ -1,11 +1,12 @@
-# Variables:
-#
-# PUPPET_VERSION   | specifies the version of the puppet gem to load
-# SIMP_GEM_SERVERS | a space/comma delimited list of rubygem servers
+# ------------------------------------------------------------------------------
+# Environment variables:
+#   SIMP_GEM_SERVERS | a space/comma delimited list of rubygem servers
+#   PUPPET_VERSION   | specifies the version of the puppet gem to load
+# ------------------------------------------------------------------------------
+# NOTE: SIMP Puppet rake tasks support ruby 2.0 and ruby 2.1
+# ------------------------------------------------------------------------------
 puppetversion = ENV.key?('PUPPET_VERSION') ? ENV['PUPPET_VERSION'].to_s : '~>3'
 gem_sources   = ENV.key?('SIMP_GEM_SERVERS') ? ENV['SIMP_GEM_SERVERS'].split(/[, ]+/) : ['https://rubygems.org']
-
-PUPPET_VERSION = puppetversion.sub(/[~><=]{1,2}/, '').strip
 
 gem_sources.each { |gem_source| source gem_source }
 
@@ -14,24 +15,15 @@ group :test do
   gem 'puppet', puppetversion
   gem 'rspec', '< 3.2.0'
   gem 'rspec-puppet'
+  gem 'hiera-puppet-helper'
   gem 'puppetlabs_spec_helper'
   gem 'metadata-json-lint'
-  gem 'simp-rspec-puppet-facts'
-  gem 'puppet-lint', '>= 1.1.0',                                   :require => false
-  gem 'puppet-lint-absolute_classname-check',                      :require => false
-  gem 'puppet-lint-leading_zero-check',                            :require => false
-  gem 'puppet-lint-trailing_comma-check',                          :require => false
-  gem 'puppet-lint-version_comparison-check',                      :require => false
-  gem 'puppet-lint-classes_and_types_beginning_with_digits-check', :require => false
-  gem 'puppet-lint-unquoted_string-check',                         :require => false
-  gem 'puppet-lint-resource_reference_syntax',                     :require => false
+  gem 'simp-rspec-puppet-facts', '~> 1.3'
 
-  # dependency hacks:
-  gem 'fog-google', '~> 0.0.9' # 0.1 dropped support for ruby 1.9
+  gem 'toml'
 
-  # See[ HI-505](https://tickets.puppetlabs.com/browse/HI-505)
-  if Gem::Version.new(PUPPET_VERSION) >= Gem::Version.new('4.0')
-    gem 'hiera', '~> 3.0.0'
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.2')
+    gem 'rubocop', :require => false
   end
 
   # simp-rake-helpers does not suport puppet 2.7.X
@@ -41,37 +33,27 @@ group :test do
      RUBY_VERSION.sub(/\.\d+$/, '') != '1.8'
     gem 'simp-rake-helpers'
   end
-  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.2')
-    gem 'rubocop', :require => false
-  end
 end
 
 group :development do
   gem 'travis'
   gem 'travis-lint'
+  gem 'travish'
   gem 'vagrant-wrapper'
   gem 'puppet-blacksmith'
   gem 'guard-rake'
   gem 'pry'
   gem 'pry-doc'
+
+  # `listen` is a dependency of `guard`
+  # from `listen` 3.1+, `ruby_dep` requires Ruby version >= 2.2.3, ~> 2.2
   if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.2')
-    gem 'listen', '< 3.1', :require => false
+    gem 'listen', '~> 3.0.6', :require => false
   end
 end
 
 group :system_tests do
   gem 'beaker'
   gem 'beaker-rspec'
-
-  # 1.0.5 introduces FIPS-first acc tests
   gem 'simp-beaker-helpers', '>= 1.0.5'
-
-  # dependency hacks:
-  # NOTE: Workaround because net-ssh 2.10 is busting beaker
-  # lib/ruby/1.9.1/socket.rb:251:in `tcp': wrong number of arguments (5 for 4) (ArgumentError)
-  gem 'net-ssh', '~> 2.9.0'
-
-  # XXX: Workaround for `wrong number of arguments (0 for 1)` error on all serverspec/specinfra tests.
-  # See https://github.com/puppetlabs/ruby-hocon/issues/75 for details.
-  gem 'specinfra', '~> 2.28.0'
 end
