@@ -132,7 +132,101 @@ describe 'the grafana server' do
     end
   end
 
-  context 'with ldap configured' do
+  shared_examples_for 'an LDAP-enabled server' do
+    it 'allows `testadmin` to authenticate' do
+      login_args = curl_rest_args + "-d '{\"user\":\"testadmin\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
+      login_args << "https://#{grafana_fqdn}/login"
+      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
+      expect(login_output['message']).to eq('Logged in')
+    end
+
+    it 'allows `testuser-allow` to authenticate' do
+      login_args = curl_rest_args + "-d '{\"user\":\"testuser-allow\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
+      login_args << "https://#{grafana_fqdn}/login"
+      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
+      expect(login_output['message']).to eq('Logged in')
+    end
+
+    it 'denies `testuser-deny`' do
+      login_args = curl_rest_args + "-d '{\"user\":\"testuser-deny\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
+      login_args << "https://#{grafana_fqdn}/login"
+      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
+      expect(login_output['message']).to eq('Invalid username or password')
+    end
+
+    it 'assigns `testadmin` the role of Admin in the Main organization' do
+      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
+      user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
+      testadmin         = user_fetch_output.select { |user| user['login'] == 'testadmin' }[0]
+      expect(testadmin['role']).to eq('Admin')
+    end
+
+    it 'assigns `testuser-allow` the role of Editor in the Main organization' do
+      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
+      user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
+      testuser_allow    = user_fetch_output.select { |user| user['login'] == 'testuser-allow' }[0]
+      expect(testuser_allow['role']).to eq('Editor')
+    end
+  end
+
+  context 'with LDAP enabled via the global catalyst' do
+    before(:all) do
+      context_hieradata = "---\nuse_ldap: true"
+      write_hieradata_to grafana, context_hieradata, 'context'
+    end
+    after(:all) { write_hieradata_to grafana, "---\n", 'context' }
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
+          cfg => { 'auth.basic' => { enabled => true } },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::add_tcp_stateful_listen { 'allow_ssh':
+          client_nets => hiera('client_nets'),
+          dports      => '22',
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with LDAP enabled in the manifest' do
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
+          cfg => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::add_tcp_stateful_listen { 'allow_ssh':
+          client_nets => hiera('client_nets'),
+          dports      => '22',
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with LDAP configured' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
@@ -186,40 +280,7 @@ describe 'the grafana server' do
       apply_manifest_on(grafana, manifest, :catch_changes => true)
     end
 
-    it 'allows `testadmin` to authenticate' do
-      login_args = curl_rest_args + "-d '{\"user\":\"testadmin\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
-      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
-      expect(login_output['message']).to eq('Logged in')
-    end
-
-    it 'allows `testuser-allow` to authenticate' do
-      login_args = curl_rest_args + "-d '{\"user\":\"testuser-allow\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
-      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
-      expect(login_output['message']).to eq('Logged in')
-    end
-
-    it 'denies `testuser-deny`' do
-      login_args = curl_rest_args + "-d '{\"user\":\"testuser-deny\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
-      login_output = JSON.parse(curl_on(grafana, login_args).stdout)
-      expect(login_output['message']).to eq('Invalid username or password')
-    end
-
-    it 'assigns `testadmin` the role of Admin in the Main organization' do
-      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
-      user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
-      testadmin         = user_fetch_output.select { |user| user['login'] == 'testadmin' }[0]
-      expect(testadmin['role']).to eq('Admin')
-    end
-
-    it 'assigns `testuser-allow` the role of Editor in the Main organization' do
-      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
-      user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
-      testuser_allow    = user_fetch_output.select { |user| user['login'] == 'testuser-allow' }[0]
-      expect(testuser_allow['role']).to eq('Editor')
-    end
+    it_behaves_like 'an LDAP-enabled server'
   end
 
   context 'with a data source defined' do
