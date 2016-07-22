@@ -1,9 +1,5 @@
 ---
-ldap::base_dn: 'dc=test'
-ldap::bind_dn: "cn=hostAuth,ou=Hosts,%{hiera('ldap::base_dn')}"
-ldap::bind_pw: '123$%^qweRTY'
-ldap::uri:
-  - 'ldap://<%= simp_server.reachable_name %>'
+# Additional Hiera data for the fake Elasticsearch server
 
 simp_elasticsearch::cluster_name    : 'test_cluster'
 simp_elasticsearch::bind_host       : '<%= elasticsearch_server.reachable_name %>'
@@ -16,15 +12,9 @@ simp_elasticsearch::http_method_acl :
       '10.0.2.0/24'   : ['GET', 'POST']
 simp_elasticsearch::apache::ssl_verify_client: 'optional'
 
-use_simp_pki: false
-
 apache::rsync_web_root: false
+
 rsync::server : "%{::fqdn}"
 
-client_nets:
-  - 'ALL'
-
-pki_dir: '/etc/pki/simp-testing/pki'
-
 use_simp_pki : false
-use_iptables : true
+pki_dir: '/etc/pki/simp-testing/pki'
