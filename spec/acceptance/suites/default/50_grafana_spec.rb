@@ -11,7 +11,23 @@ grafana              = only_host_with_role(hosts, 'grafana')
 grafana_fqdn         = fact_on(grafana, 'fqdn')
 
 describe 'the grafana server' do
-  before(:all) { grafana.install_package('rubygem-toml') } # This would normally be required on the Puppet compile masters.
+  before(:all) do
+    default_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
+    grafana_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding)
+
+    # NOTE: The `context` terminus is for per-context blocks.  If used, be sure
+    # it is filled with an empty YAML document (`---\n`) in the `after(:all)`
+    # hook for the context so it doesn't effect subsequent contexts.
+    write_hiera_config_on grafana, %W(context #{grafana_fqdn} default)
+
+    write_hieradata_to grafana, default_hieradata, 'default'
+    write_hieradata_to grafana, grafana_hieradata, grafana_fqdn
+    write_hieradata_to grafana, "---\n", 'context'
+
+    # This would normally be required on the Puppet compile masters.
+    grafana.install_package('rubygem-toml')
+  end
+
   let(:curl_base_args) { '--cacert /etc/pki/simp-testing/pki/cacerts/cacerts.pem ' }
   let(:curl_rest_args) { curl_base_args + '-H "Accept: application/json" -H "Content-Type: application/json" ' }
 
@@ -19,13 +35,12 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          client_nets     => ['127.0.0.0/8', '10.255.0.0/16'],
-          cfg             => { security => { admin_password => 'admin' } },
+          cfg => { security => { admin_password => 'admin' } },
         }
 
         # Allow SSH from the standard Vagrant nets
         iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => ['10.0.2.0/16'],
+          client_nets => hiera('client_nets'),
           dports      => '22',
         }
       EOS
@@ -97,13 +112,12 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          client_nets     => ['127.0.0.0/8', '10.255.0.0/16'],
-          cfg             => { 'auth.basic' => { enabled => true } },
+          cfg => { 'auth.basic' => { enabled => true } },
         }
 
         # Allow SSH from the standard Vagrant nets
         iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => ['10.0.2.0/16'],
+          client_nets => hiera('client_nets'),
           dports      => '22',
         }
       EOS
@@ -118,63 +132,7 @@ describe 'the grafana server' do
     end
   end
 
-  context 'with ldap configured' do
-    let(:grafana_hieradata) { ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding) }
-    let(:manifest) do
-      <<-EOS
-        class { 'simp_grafana':
-          client_nets     => ['127.0.0.0/8', '10.255.0.0/16'],
-          cfg             => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
-          ldap_cfg        => {
-            verbose_logging => true,
-            servers         => [
-              {
-                host                  => '#{simp_fqdn}',
-                # XXX: If we don't use arithmetic here Puppet 3.x will convert
-                # the Integer to a String when passing it to Ruby, and Grafana will
-                # fail to start due to the invalid type.
-                port                  => 635 + 1,
-                use_ssl               => true,
-                ssl_skip_verify       => true,
-                bind_dn               => 'uid=grafana,ou=Services,dc=test',
-                bind_password         => '123$%^qweRTY',
-                search_filter         => '(uid=%s)',
-                search_base_dns       => ['ou=People,dc=test'],
-                group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
-                group_search_base_dns => ['ou=Group,dc=test'],
-                attributes            => {
-                  name      => 'givenName',
-                  surname   => 'sn',
-                  username  => 'uid',
-                  member_of => 'gidNumber',
-                  email     => 'mail',
-                },
-                group_mappings => [
-                  { group_dn => '50000', org_role => 'Admin'  },
-                  { group_dn => '50001', org_role => 'Editor' },
-                ],
-              },
-            ],
-          },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => ['10.0.2.0/16'],
-          dports      => '22',
-        }
-      EOS
-    end
-
-    it 'applies without errors' do
-      set_hieradata_on(grafana, grafana_hieradata, 'default')
-      apply_manifest_on(grafana, manifest, :catch_failures => true)
-    end
-
-    it 'is idempotent' do
-      apply_manifest_on(grafana, manifest, :catch_changes => true)
-    end
-
+  shared_examples_for 'an LDAP-enabled server' do
     it 'allows `testadmin` to authenticate' do
       login_args = curl_rest_args + "-d '{\"user\":\"testadmin\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
       login_args << "https://#{grafana_fqdn}/login"
@@ -211,12 +169,124 @@ describe 'the grafana server' do
     end
   end
 
-  context 'with a data source defined' do
-    let(:grafana_hieradata) { ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding) }
+  context 'with LDAP enabled via the global catalyst' do
+    before(:all) do
+      context_hieradata = "---\nuse_ldap: true"
+      write_hieradata_to grafana, context_hieradata, 'context'
+    end
+    after(:all) { write_hieradata_to grafana, "---\n", 'context' }
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          client_nets     => ['127.0.0.0/8', '10.255.0.0/16'],
+          cfg => { 'auth.basic' => { enabled => true } },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::add_tcp_stateful_listen { 'allow_ssh':
+          client_nets => hiera('client_nets'),
+          dports      => '22',
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with LDAP enabled in the manifest' do
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
+          cfg => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::add_tcp_stateful_listen { 'allow_ssh':
+          client_nets => hiera('client_nets'),
+          dports      => '22',
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with LDAP configured' do
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
+          cfg      => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          ldap_cfg => {
+            verbose_logging => true,
+            servers         => [
+              {
+                host                  => '#{simp_fqdn}',
+                # XXX: If we don't use arithmetic here Puppet 3.x will convert
+                # the Integer to a String when passing it to Ruby, and Grafana will
+                # fail to start due to the invalid type.
+                port                  => 635 + 1,
+                use_ssl               => true,
+                ssl_skip_verify       => true,
+                bind_dn               => 'uid=grafana,ou=Services,dc=test',
+                bind_password         => '123$%^qweRTY',
+                search_filter         => '(uid=%s)',
+                search_base_dns       => ['ou=People,dc=test'],
+                group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
+                group_search_base_dns => ['ou=Group,dc=test'],
+                attributes            => {
+                  name      => 'givenName',
+                  surname   => 'sn',
+                  username  => 'uid',
+                  member_of => 'gidNumber',
+                  email     => 'mail',
+                },
+                group_mappings => [
+                  { group_dn => '50000', org_role => 'Admin'  },
+                  { group_dn => '50001', org_role => 'Editor' },
+                ],
+              },
+            ],
+          },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::add_tcp_stateful_listen { 'allow_ssh':
+          client_nets => hiera('client_nets'),
+          dports      => '22',
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with a data source defined' do
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
           cfg             => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
           ldap_cfg        => {
             verbose_logging => true,
@@ -253,7 +323,7 @@ describe 'the grafana server' do
 
         # Allow SSH from the standard Vagrant nets
         iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => ['10.0.2.0/16'],
+          client_nets => hiera('client_nets'),
           dports      => '22',
         }
 
@@ -278,7 +348,6 @@ describe 'the grafana server' do
     end
 
     it 'applies without errors' do
-      set_hieradata_on grafana, grafana_hieradata, 'default'
       apply_manifest_on grafana, manifest, :catch_failures => true
     end
 
@@ -296,28 +365,29 @@ describe 'the grafana server' do
 
   context 'when the `::grafana::package_source` is set to a local file' do
     before(:all) do
+      context_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana_local_package.yaml.erb'))).result(binding)
+      write_hieradata_to grafana, context_hieradata, 'context'
+
       on(grafana, 'yum remove -y grafana')
       grafana.install_package('yum-utils')
       on(grafana, 'cd /tmp; yumdownloader grafana')
       on(grafana, 'cd /tmp; mv grafana-*.rpm grafana_package.x86_64.rpm')
     end
-    let(:grafana_hieradata) { ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana_local_package.yaml.erb'))).result(binding) }
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          client_nets => ['127.0.0.0/8', '10.255.0.0/16'],
+          install_method => 'package',
         }
 
         # Allow SSH from the standard Vagrant nets
         iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => ['10.0.2.0/16'],
+          client_nets => hiera('client_nets'),
           dports      => '22',
         }
       EOS
     end
 
     it 'applies without errors' do
-      set_hieradata_on(grafana, grafana_hieradata, 'default')
       apply_manifest_on(grafana, manifest, :catch_failures => true)
     end
 

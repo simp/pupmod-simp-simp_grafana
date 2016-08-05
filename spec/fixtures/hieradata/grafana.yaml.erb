@@ -1,17 +1,4 @@
 ---
-# === ldap::base_dn ===
-# The Base DN of the LDAP server
-"ldap::base_dn": "dc=test"
+# Additional Hiera data for the Grafana server
 
-# === ldap::bind_dn ===
-# LDAP Bind Distinguished Name
-"ldap::bind_dn": "uid=grafana,ou=Services,%{hiera('ldap::base_dn')}"
-
-# === ldap::master ===
-# This is the LDAP master in URI form (ldap://server)
-"ldap::master": "ldap://<%= simp_server.reachable_name %>"
-
-# === ldap::uri ===
-# List of OpenLDAP servers in URI form (ldap://server)
-"ldap::uri":
-    - "ldap://<%= simp_server.reachable_name %>"
+ldap::bind_dn: "uid=grafana,ou=Services,%{hiera('ldap::base_dn')}"

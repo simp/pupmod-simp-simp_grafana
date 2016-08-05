@@ -61,19 +61,19 @@ sn: user
 mail: testuser-deny@test
 
 # Defines a POSIX group that should get full administrative privileges
-dn: cn=grafana-admins,ou=Group,dc=test
+dn: cn=simp_grafana_admins,ou=Group,dc=test
 objectClass: top
 objectClass: posixGroup
-cn: grafana-admins
+cn: simp_grafana_admins
 gidNumber: 50000
 description: "Grafana administrators"
 memberUID: testadmin
 
 # Defines a POSIX group that should get basic privileges
-dn: cn=grafana-users,ou=Group,dc=test
+dn: cn=simp_grafana_editors,ou=Group,dc=test
 objectClass: top
 objectClass: posixGroup
-cn: grafana-users
+cn: simp_grafana_editors
 gidNumber: 50001
 description: "Allowed Grafana users"
 memberUID: testuser-allow

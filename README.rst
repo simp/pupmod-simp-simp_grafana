@@ -97,6 +97,41 @@ the install method may be changed like this:
     ---
     grafana::install_method: 'package'
 
+LDAP configuration
+^^^^^^^^^^^^^^^^^^
+
+LDAP authentication is disabled by default, but defaults are pre-seeded
+for the SIMP OpenLDAP server using the SIMP-standard Hiera keys. To use
+them, simply enable ``use_ldap``.
+
+.. code:: puppet
+
+    # Manifest
+
+    include '::simp_grafana'
+
+.. code:: YAML
+
+    # Hiera data
+    ---
+    use_ldap: true
+
+This will also set up default group mappings for groups with the CNs
+"simp_grafana_admins," "simp_grafana_editors," "simp_grafana_editors_ro,"
+and "simp_grafana_viewers."
+
+.. note::
+    At present the module does not support config merging of servers in
+    the ``ldap_cfg`` parameter, so if any changes are made to the default
+    server, the entire server must be configured.
+
+.. note::
+    Due to the way Puppet 3.x handles data types, Integers in the ``ldap_cfg``
+    hash MUST be specified with arithmetic expression or else they will
+    be converted to Strings when passed to the Ruby code that generates
+    the LDAP configuration file.  For example, to specify the port 8636,
+    use the value "8635 + 1" without quotes.
+
 Network-isolated Setup
 ^^^^^^^^^^^^^^^^^^^^^^
 
