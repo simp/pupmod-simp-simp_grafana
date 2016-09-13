@@ -100,7 +100,11 @@ class simp_grafana (
   $cfg               = {},
   $ldap_cfg          = {},
   $install_method    = 'repo',
-  $use_internet_repo = false
+  $use_internet_repo = false,
+#Need to set the version numbers until the upstream module can support "latest"
+  $version           = '3.1.1',
+  $rpm_iteration     = '1470047149',
+  $simp_dashboards   = false
 ) inherits ::simp_grafana::params {
 
   validate_array($client_nets)
@@ -146,6 +150,14 @@ class simp_grafana (
     cfg                 => $merged_cfg,
     ldap_cfg            => $merged_ldap_cfg,
     install_method      => $install_method,
-    manage_package_repo => $use_internet_repo
+    manage_package_repo => $use_internet_repo,
+    version             => $version,
+    rpm_iteration       => $rpm_iteration
+  }
+
+  if $simp_dashboards {
+    package { 'simp-grafana-dashboards':
+      ensure => 'latest',
+    }
   }
 }
