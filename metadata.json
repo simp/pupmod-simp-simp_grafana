@@ -1,6 +1,6 @@
 {
   "name":    "simp-simp_grafana",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author":  "simp",
   "summary": "A profile module to integrate Grafana with SIMP",
   "license": "Apache-2.0",
