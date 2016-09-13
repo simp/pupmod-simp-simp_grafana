@@ -34,7 +34,7 @@ class simp_grafana::params {
   # Static defaults
   $cfg = {
     server       => {
-      http_port => 443,
+      http_port => 8443,
       protocol  => 'https',
       cert_file => "/etc/grafana/pki/public/${::fqdn}.pub",
       cert_key  => "/etc/grafana/pki/private/${::fqdn}.pem",
@@ -50,6 +50,8 @@ class simp_grafana::params {
     },
     'auth.basic' => { enabled => false },
     'auth.ldap'  => { enabled => $use_ldap },
+    #Allows SIMP dashboards to be read from the file system
+    'dashboards.json' => {enabled => true},
   }
 
   $ldap_group_mapping_defaults = [

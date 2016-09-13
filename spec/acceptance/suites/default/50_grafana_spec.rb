@@ -9,6 +9,7 @@ elasticsearch_server = only_host_with_role(hosts, 'elasticsearch_server')
 elasticsearch_fqdn   = fact_on(elasticsearch_server, 'fqdn')
 grafana              = only_host_with_role(hosts, 'grafana')
 grafana_fqdn         = fact_on(grafana, 'fqdn')
+grafana_port         = "8443"
 
 describe 'the grafana server' do
   before(:all) do
@@ -86,23 +87,23 @@ describe 'the grafana server' do
       it { is_expected.not_to be_readable.by 'others' }
     end
 
-    describe port(443) do
+    describe port("#{grafana_port}") do
       it { is_expected.to be_listening }
     end
 
     describe iptables do
-      it 'allows traffic from `client_nets` to port 443' do
-        is_expected.to have_rule('-s 127.0.0.0/8 -p tcp -m state --state NEW -m tcp -m multiport --dports 443 -j ACCEPT').
+      it "allows traffic from `client_nets` to port #{grafana_port}" do
+        is_expected.to have_rule("-s 127.0.0.0/8 -p tcp -m state --state NEW -m tcp -m multiport --dports #{grafana_port} -j ACCEPT").
           with_chain('LOCAL-INPUT')
       end
     end
 
     it 'accepts connections' do
-      curl_on(grafana, curl_base_args + "--verbose https://#{grafana_fqdn}")
+      curl_on(grafana, curl_base_args + "--verbose https://#{grafana_fqdn}:#{grafana_port}")
     end
 
     it 'rejects HTTP basic authentication' do
-      curl_output   = curl_on(grafana, curl_base_args + "https://admin:admin@#{grafana_fqdn}/api/login/ping").stdout
+      curl_output   = curl_on(grafana, curl_base_args + "https://admin:admin@#{grafana_fqdn}:#{grafana_port}/api/login/ping").stdout
       json_response = JSON.parse(curl_output)
       expect(json_response['message']).to match('Unauthorized')
     end
@@ -135,34 +136,34 @@ describe 'the grafana server' do
   shared_examples_for 'an LDAP-enabled server' do
     it 'allows `testadmin` to authenticate' do
       login_args = curl_rest_args + "-d '{\"user\":\"testadmin\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
+      login_args << "https://#{grafana_fqdn}:#{grafana_port}/login"
       login_output = JSON.parse(curl_on(grafana, login_args).stdout)
       expect(login_output['message']).to eq('Logged in')
     end
 
     it 'allows `testuser-allow` to authenticate' do
       login_args = curl_rest_args + "-d '{\"user\":\"testuser-allow\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
+      login_args << "https://#{grafana_fqdn}:#{grafana_port}/login"
       login_output = JSON.parse(curl_on(grafana, login_args).stdout)
       expect(login_output['message']).to eq('Logged in')
     end
 
     it 'denies `testuser-deny`' do
       login_args = curl_rest_args + "-d '{\"user\":\"testuser-deny\",\"email\":\"\",\"password\":\"123$%^qweRTY\"}' "
-      login_args << "https://#{grafana_fqdn}/login"
+      login_args << "https://#{grafana_fqdn}:#{grafana_port}/login"
       login_output = JSON.parse(curl_on(grafana, login_args).stdout)
       expect(login_output['message']).to eq('Invalid username or password')
     end
 
     it 'assigns `testadmin` the role of Admin in the Main organization' do
-      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
+      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}:#{grafana_port}/api/orgs/1/users"
       user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
       testadmin         = user_fetch_output.select { |user| user['login'] == 'testadmin' }[0]
       expect(testadmin['role']).to eq('Admin')
     end
 
     it 'assigns `testuser-allow` the role of Editor in the Main organization' do
-      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}/api/orgs/1/users"
+      user_fetch_args   = curl_rest_args + "https://admin:admin@#{grafana_fqdn}:#{grafana_port}/api/orgs/1/users"
       user_fetch_output = JSON.parse(curl_on(grafana, user_fetch_args).stdout)
       testuser_allow    = user_fetch_output.select { |user| user['login'] == 'testuser-allow' }[0]
       expect(testuser_allow['role']).to eq('Editor')
@@ -329,7 +330,7 @@ describe 'the grafana server' do
 
         grafana_datasource { 'elasticsearch':
           ensure            => present,
-          grafana_url       => 'https://#{grafana_fqdn}',
+          grafana_url       => 'https://#{grafana_fqdn}:#{grafana_port}',
           grafana_user      => 'admin',
           grafana_password  => 'admin',
           type              => 'elasticsearch',
@@ -357,7 +358,7 @@ describe 'the grafana server' do
 
     it 'acts as a proxy to Elasticsearch' do
       es_test_args = curl_rest_args
-      es_test_args << "https://admin:admin@#{grafana_fqdn}/api/datasources/proxy/1/logstash-#{Time.now.utc.strftime('%Y.%m.%d')}/_stats"
+      es_test_args << "https://admin:admin@#{grafana_fqdn}:#{grafana_port}/api/datasources/proxy/1/logstash-#{Time.now.utc.strftime('%Y.%m.%d')}/_stats"
       curl_output = curl_on(grafana, es_test_args).stdout
       expect(curl_output).to match(/_shards/)
     end
