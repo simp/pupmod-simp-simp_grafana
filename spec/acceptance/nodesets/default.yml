@@ -40,7 +40,7 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/352C64E5.txt
       pcloud:
-        url: https://packagecloud.io/simp-project/5_1_X_Dependencies/el/7/$basearch
+        url: https://packagecloud.io/simp-project/5_X_Dependencies/el/7/$basearch
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
           - https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
