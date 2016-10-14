@@ -2,48 +2,85 @@
 fixtures:
   repositories:
     apache:
-      repo: 'https://github.com/simp/pupmod-simp-apache'
+      repo: https://github.com/simp/pupmod-simp-apache
+      branch: 5.X
     augeasproviders_core:
-      repo: 'https://github.com/simp/augeasproviders_core'
-      branch: 'simp-master'
+      branch: 5.X
+      repo: https://github.com/simp/augeasproviders_core
     augeasproviders_grub:
-      repo: 'https://github.com/simp/augeasproviders_grub'
-      branch: 'simp-master'
-    auditd: 'https://github.com/simp/pupmod-simp-auditd'
-    compliance_markup: 'https://github.com/simp/pupmod-simp-compliance_markup'
+      branch: 5.X
+      repo: https://github.com/simp/augeasproviders_grub
+    auditd:
+      repo: https://github.com/simp/pupmod-simp-auditd
+      branch: 5.X
+    compliance_markup:
+      repo: https://github.com/simp/pupmod-simp-compliance_markup
+      branch: 5.X
     datacat:
-      repo: "https://github.com/simp/puppet-datacat"
+      repo: https://github.com/simp/puppet-datacat
+      branch: 5.X
     elasticsearch:
-      repo: "https://github.com/simp/puppet-elasticsearch"
-      branch: "simp-master"
+      branch: 5.X
+      repo: https://github.com/simp/puppet-elasticsearch
     file_concat:
-      repo: "https://github.com/simp/puppet-lib-file_concat"
-      branch: "simp-master"
+      branch: 5.X
+      repo: https://github.com/simp/puppet-lib-file_concat
     grafana:
-      repo: 'https://github.com/simp/puppet-grafana'
-      ref: '6d426d5ccc52ff23dbbcfc45290dafd224b5d2bc'
+      ref: 6d426d5ccc52ff23dbbcfc45290dafd224b5d2bc
+      repo: https://github.com/simp/puppet-grafana
+      branch: 5.X
     haveged:
-      repo: 'https://github.com/simp/puppet-haveged'
-      ref: 'simp-master'
-    iptables: 'https://github.com/simp/pupmod-simp-iptables'
+      ref: simp-master
+      repo: https://github.com/simp/puppet-haveged
+      branch: 5.X
+    iptables:
+      repo: https://github.com/simp/pupmod-simp-iptables
+      branch: 5.X
     java:
-      repo: "https://github.com/simp/puppetlabs-java"
-      ref: 'simp-master'
-    logrotate: 'https://github.com/simp/pupmod-simp-logrotate'
-    oddjob: 'https://github.com/simp/pupmod-simp-oddjob'
-    openldap: 'https://github.com/simp/pupmod-simp-openldap'
-    pam: 'https://github.com/simp/pupmod-simp-pam'
-    pki: 'https://github.com/simp/pupmod-simp-pki'
-    rsyslog: 'https://github.com/simp/pupmod-simp-rsyslog'
-    rsync: "https://github.com/simp/puppet-lib-file_concat"
-    simp: 'https://github.com/simp/pupmod-simp-simp'
-    simp_elasticsearch: "https://github.com/simp/pupmod-simp-simp_elasticsearch"
-    simpcat: 'https://github.com/simp/pupmod-simp-concat'
-    simplib: 'https://github.com/simp/pupmod-simp-simplib'
+      ref: simp-master
+      repo: https://github.com/simp/puppetlabs-java
+      branch: 5.X
+    logrotate:
+      repo: https://github.com/simp/pupmod-simp-logrotate
+      branch: 5.X
+    oddjob:
+      repo: https://github.com/simp/pupmod-simp-oddjob
+      branch: 5.X
+    openldap:
+      repo: https://github.com/simp/pupmod-simp-openldap
+      branch: 5.X
+    pam:
+      repo: https://github.com/simp/pupmod-simp-pam
+      branch: 5.X
+    pki:
+      repo: https://github.com/simp/pupmod-simp-pki
+      branch: 5.X
+    rsyslog:
+      repo: https://github.com/simp/pupmod-simp-rsyslog
+      branch: 5.X
+    rsync:
+      repo: https://github.com/simp/puppet-lib-file_concat
+      branch: 5.X
+    simp:
+      repo: https://github.com/simp/pupmod-simp-simp
+      branch: 5.X
+    simp_elasticsearch:
+      repo: https://github.com/simp/pupmod-simp-simp_elasticsearch
+      branch: 5.X
+    simpcat:
+      repo: https://github.com/simp/pupmod-simp-concat
+      branch: 5.X
+    simplib:
+      repo: https://github.com/simp/pupmod-simp-simplib
+      branch: 5.X
     stdlib:
-      repo: 'https://github.com/simp/puppetlabs-stdlib'
-      branch: 'simp-master'
-    sysctl: "https://github.com/simp/pupmod-simp-sysctl"
-    tcpwrappers: 'https://github.com/simp/pupmod-simp-tcpwrappers'
+      branch: 5.X
+      repo: https://github.com/simp/puppetlabs-stdlib
+    sysctl:
+      repo: https://github.com/simp/pupmod-simp-sysctl
+      branch: 5.X
+    tcpwrappers:
+      repo: https://github.com/simp/pupmod-simp-tcpwrappers
+      branch: 5.X
   symlinks:
     simp_grafana: "#{source_dir}"
