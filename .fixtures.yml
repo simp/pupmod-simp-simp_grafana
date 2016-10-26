@@ -30,14 +30,12 @@ fixtures:
       repo: https://github.com/simp/puppet-grafana
       branch: 5.X
     haveged:
-      ref: simp-master
       repo: https://github.com/simp/puppet-haveged
       branch: 5.X
     iptables:
       repo: https://github.com/simp/pupmod-simp-iptables
       branch: 5.X
     java:
-      ref: simp-master
       repo: https://github.com/simp/puppetlabs-java
       branch: 5.X
     logrotate:
