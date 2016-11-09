@@ -20,14 +20,17 @@ describe 'The fake Elasticsearch server' do
     write_hieradata_to elasticsearch_server, default_hieradata, 'default'
     write_hieradata_to elasticsearch_server, es_server_hieradata, fqdn
     write_hieradata_to elasticsearch_server, "---\n", 'context'
+
+    hosts.each do |host|
+      on(host, 'ifup eth1')
+    end
   end
 
   let(:es_server_manifest) { File.open(File.join(FIXTURE_DIR, 'manifests', 'elasticsearch_server.pp')).read }
   let(:curl_args) do
-    args = '--cacert /etc/pki/simp-testing/pki/cacerts/cacerts.pem '
-    args << '-H "Accept: application/json" -H "Content-Type: application/json" '
+    args = '-H "Accept: application/json" -H "Content-Type: application/json" '
     args << "-X POST -d '{\"message\":\"GRAFANA TEST MESSAGE\",\"@timestamp\":\"#{Time.now.utc.iso8601}\",\"@version\":\"2\"}' "
-    args << "https://#{fqdn}:9200/logstash-#{Time.now.utc.strftime('%Y.%m.%d')}/logs"
+    args << "http://localhost:9199/logstash-#{Time.now.utc.strftime('%Y.%m.%d')}/logs"
     args
   end
 

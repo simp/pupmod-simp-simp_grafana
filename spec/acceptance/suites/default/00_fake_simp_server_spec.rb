@@ -18,6 +18,10 @@ describe 'The fake SIMP server' do
     write_hieradata_to simp_server, default_hieradata, 'default'
     write_hieradata_to simp_server, simp_server_hieradata, fqdn
     write_hieradata_to simp_server, "---\n", 'context'
+
+    hosts.each do |host|
+      on(host, 'ifup eth1')
+    end
   end
 
   let(:simp_server_manifest) { File.open(File.join(FIXTURE_DIR, 'manifests', 'simp_server.pp')).read }
@@ -37,7 +41,7 @@ describe 'The fake SIMP server' do
     fake_users_and_groups_ldif = File.join(FIXTURE_DIR, 'fake_users_and_groups.ldif')
     scp_to simp_server, fake_users_and_groups_ldif, '/tmp/'
     on simp_server,
-       'ldapadd -cZx -D "cn=LDAPAdmin,ou=People,dc=test" -w "123$%^qweRTY" -f /tmp/fake_users_and_groups.ldif',
+       'ldapadd -cZx -H ldap://localhost -D "cn=LDAPAdmin,ou=People,dc=test" -w "123$%^qweRTY" -f /tmp/fake_users_and_groups.ldif',
        :acceptable_exit_codes => [0, 68]
   end
 end
