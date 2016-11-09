@@ -10,9 +10,11 @@ simp_elasticsearch::http_method_acl :
     'hosts':
       '10.255.0.0/16' : ['GET', 'POST']
       '10.0.2.0/24'   : ['GET', 'POST']
-simp_elasticsearch::apache::ssl_verify_client: 'optional'
+simp_elasticsearch::apache::ssl_verify_client: 'none'
+simp_elasticsearch::simp_apache::ssl_verify_client: 'none'
 
 apache::rsync_web_root: false
+simp_apache::rsync_web_root: false
 
 rsync::server : "%{::fqdn}"
 
