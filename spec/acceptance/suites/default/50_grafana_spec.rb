@@ -25,8 +25,16 @@ describe 'the grafana server' do
     write_hieradata_to grafana, grafana_hieradata, grafana_fqdn
     write_hieradata_to grafana, "---\n", 'context'
 
+    hosts.each do |host|
+      on(host, 'ifup eth1')
+    end
+
     # This would normally be required on the Puppet compile masters.
-    grafana.install_package('rubygem-toml')
+    if grafana[:type] == 'aio'
+      on(grafana, 'puppetserver gem install rubygem-toml')
+    else
+      grafana.install_package('rubygem-toml')
+    end
   end
 
   let(:curl_base_args) { '--cacert /etc/pki/simp-testing/pki/cacerts/cacerts.pem ' }
@@ -373,7 +381,12 @@ describe 'the grafana server' do
       grafana.install_package('yum-utils')
       on(grafana, 'cd /tmp; yumdownloader grafana')
       on(grafana, 'cd /tmp; mv grafana-*.rpm grafana_package.x86_64.rpm')
+
+      hosts.each do |host|
+        on(host, 'ifup eth1')
+      end
     end
+
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':

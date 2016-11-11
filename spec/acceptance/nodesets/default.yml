@@ -7,7 +7,6 @@ HOSTS:
     platform: el-7-x86_64
     hypervisor: vagrant
     box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
     vagrant_memsize: 2048
     yum_repos:
       epel:
@@ -29,7 +28,6 @@ HOSTS:
     platform: el-7-x86_64
     hypervisor: vagrant
     box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
     yum_repos:
       grafana:
         url: https://packagecloud.io/grafana/stable/el/7/$basearch
@@ -59,7 +57,6 @@ HOSTS:
     platform: el-7-x86_64
     hypervisor: vagrant
     box: centos/7
-    box_url: https://atlas.hashicorp.com/centos/boxes/7
     vagrant_memsize: 1024
     yum_repos:
       epel:
