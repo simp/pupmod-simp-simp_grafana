@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_a9605ad0",
+        "filename": "Gemfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-11-14T20:34:04Z",
+      "side": 1,
+      "message": "this has been merged to master and released",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 131
+      },
+      "revId": "7326a0d465ccc783f45c0f25dffa7c5ff4312c1d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_895b5622",
+        "filename": "spec/fixtures/hieradata/elasticsearch_server.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-11-14T20:34:04Z",
+      "side": 1,
+      "message": "are both of these used?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 58
+      },
+      "revId": "7326a0d465ccc783f45c0f25dffa7c5ff4312c1d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
