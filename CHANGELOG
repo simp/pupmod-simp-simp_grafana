@@ -1,6 +1,10 @@
+* Wed Nov 16 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 0.1.2-0
+- Updated iptables dependency version
+
 * Sun Sep 25 2016 Ralph Wright <rwright.yamanishi@onyxpoint.com> - 0.1.1-0
 - A few minor fixes for seemless install
 - Added option to install SIMP dashboards
 - Added option to allow SIMP dashboards to be installed
+
 * Tue Jul 11 2016 Lucas Yamanishi <lucas.yamanishi@onyxpoint.com> - 0.1.0-0
 - Initial Release
