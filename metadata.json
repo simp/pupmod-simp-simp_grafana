@@ -1,7 +1,7 @@
 {
   "name": "simp-simp_grafana",
   "version": "0.1.2",
-  "author": "simp",
+  "author": "SIMP Team",
   "summary": "A profile module to integrate Grafana with SIMP",
   "license": "Apache-2.0",
   "source": "https://github.com/simp/pupmod-simp-grafana.git",
