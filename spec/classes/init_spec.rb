@@ -11,7 +11,10 @@ describe 'simp_grafana' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) do
-        facts.merge(:auditd_version => '2.4.3')
+        facts.merge({
+          :auditd_version => '2.4.3',
+          :custom_hiera => 'actual_spec_tests',
+        })
       end
 
       context 'without any parameters' do
