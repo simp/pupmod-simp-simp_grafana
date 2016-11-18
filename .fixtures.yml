@@ -1,53 +1,50 @@
 ---
 fixtures:
   repositories:
+    auditd: https://github.com/simp/pupmod-simp-auditd
     augeasproviders_core:
-      repo: 'https://github.com/simp/augeasproviders_core'
-      branch: 'simp-master'
+      repo: https://github.com/simp/augeasproviders_core
+      branch: simp-master
     augeasproviders_grub:
-      repo: 'https://github.com/simp/augeasproviders_grub'
-      branch: 'simp-master'
-    auditd: 'https://github.com/simp/pupmod-simp-auditd'
-    compliance_markup:
-      repo: 'https://github.com/simp/pupmod-simp-compliance_markup'
-      branch: '1.0.2'
+      repo: https://github.com/simp/augeasproviders_grub
+      branch: simp-master
     datacat:
-      repo: "https://github.com/simp/puppet-datacat"
+      repo: https://github.com/simp/puppet-datacat
     elasticsearch:
-      repo: "https://github.com/simp/puppet-elasticsearch"
-      branch: "simp-master"
+      repo: https://github.com/simp/puppet-elasticsearch
+      branch: simp-master
     file_concat:
-      repo: "https://github.com/simp/puppet-lib-file_concat"
-      branch: "simp-master"
+      repo: https://github.com/simp/puppet-lib-file_concat
+      branch: simp-master
     grafana:
-      repo: 'https://github.com/simp/puppet-grafana'
-      ref: '6d426d5ccc52ff23dbbcfc45290dafd224b5d2bc'
+      repo: https://github.com/simp/puppet-grafana
+      ref: 6d426d5ccc52ff23dbbcfc45290dafd224b5d2bc
     haveged:
-      repo: 'https://github.com/simp/puppet-haveged'
-      ref: 'simp-master'
-    iptables: 'https://github.com/simp/pupmod-simp-iptables'
+      repo: https://github.com/simp/puppet-haveged
+      ref: simp-master
+    iptables: https://github.com/simp/pupmod-simp-iptables
     java:
-      repo: "https://github.com/simp/puppetlabs-java"
-      ref: 'simp-master'
-    logrotate: 'https://github.com/simp/pupmod-simp-logrotate'
-    oddjob: 'https://github.com/simp/pupmod-simp-oddjob'
-    openldap: 'https://github.com/simp/pupmod-simp-openldap'
-    pam: 'https://github.com/simp/pupmod-simp-pam'
-    pki: 'https://github.com/simp/pupmod-simp-pki'
-    rsyslog: 'https://github.com/simp/pupmod-simp-rsyslog'
-    rsync: 'https://github.com/simp/pupmod-simp-rsync'
-    simp: 'https://github.com/simp/pupmod-simp-simp'
+      repo: https://github.com/simp/puppetlabs-java
+      ref: simp-master
+    logrotate: https://github.com/simp/pupmod-simp-logrotate
+    oddjob: https://github.com/simp/pupmod-simp-oddjob
+    openldap: https://github.com/simp/pupmod-simp-openldap
+    pam: https://github.com/simp/pupmod-simp-pam
+    pki: https://github.com/simp/pupmod-simp-pki
+    rsync: https://github.com/simp/pupmod-simp-rsync
+    rsyslog: https://github.com/simp/pupmod-simp-rsyslog
+    simp: https://github.com/simp/pupmod-simp-simp
     simp_apache:
-      repo: 'https://github.com/simp/pupmod-simp-apache'
-      ref: 'master'
-    simp_elasticsearch: "https://github.com/simp/pupmod-simp-simp_elasticsearch"
-    simpcat: 'https://github.com/simp/pupmod-simp-concat'
-    simplib: 'https://github.com/simp/pupmod-simp-simplib'
+      repo: https://github.com/simp/pupmod-simp-apache
+      ref: master
+    simp_elasticsearch: https://github.com/simp/pupmod-simp-simp_elasticsearch
+    simpcat: https://github.com/simp/pupmod-simp-concat
+    simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib:
-      repo: 'https://github.com/simp/puppetlabs-stdlib'
-      branch: 'simp-master'
-    stunnel: 'https://github.com/simp/pupmod-simp-stunnel'
-    sysctl: "https://github.com/simp/pupmod-simp-sysctl"
-    tcpwrappers: 'https://github.com/simp/pupmod-simp-tcpwrappers'
+      repo: https://github.com/simp/puppetlabs-stdlib
+      branch: simp-master
+    stunnel: https://github.com/simp/pupmod-simp-stunnel
+    sysctl: https://github.com/simp/pupmod-simp-sysctl
+    tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers
   symlinks:
     simp_grafana: "#{source_dir}"
