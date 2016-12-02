@@ -44,7 +44,6 @@ fixtures:
       repo: https://github.com/simp/puppetlabs-stdlib
       branch: simp-master
     stunnel: https://github.com/simp/pupmod-simp-stunnel
-    sysctl: https://github.com/simp/pupmod-simp-sysctl
     tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers
   symlinks:
     simp_grafana: "#{source_dir}"
