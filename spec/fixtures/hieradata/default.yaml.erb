@@ -4,11 +4,11 @@
 # NOTE: All passwords are '123$%^qweRTY'
 
 # Test networks *should* be secure, but just in case, enable IPTables.
-use_iptables : true
+simp_options::firewall : true
 
 # IPv4 networks to allow using SIMP defaults.  (CIDR notation or `ALL`)
 # Set to Beaker, Vagrant & Libvirt defaults, plus the loopback network.
-client_nets:
+simp_options::trusted_nets:
   - '127.0.0.0/8'
   - '10.255.0.0/16'
   - '10.0.2.0/24'
@@ -17,15 +17,15 @@ client_nets:
 <% simp_server ||= only_host_with_role(hosts, 'simp_server') %>
 
 # LDAP settings
-ldap::base_dn   : "dc=test"
-ldap::bind_dn   : "cn=hostAuth,ou=Hosts,%{hiera('ldap::base_dn')}"
-ldap::bind_pw   : "123$%^qweRTY"
-ldap::bind_hash : "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
-ldap::sync_dn   : "cn=LDAPSync,ou=Hosts,%{hiera('ldap::base_dn')}"
-ldap::sync_pw   : "123$%^qweRTY"
-ldap::sync_hash : "{SSHA}xr8JTXnSdOlqFJfP6tNwDNmGfGKKhdbr"
-ldap::root_dn   : "cn=LDAPAdmin,ou=People,%{hiera('ldap::base_dn')}"
-ldap::root_hash : "{SSHA}cbyG41/oc3qhJkUpkrjqz60ZUizBxTHJ"
-ldap::master    : "ldap://<%= simp_server.reachable_name %>"
-ldap::uri:
+simp_options::ldap::base_dn   : "dc=test"
+simp_options::ldap::bind_dn   : "cn=hostAuth,ou=Hosts,%{hiera('ldap::base_dn')}"
+simp_options::ldap::bind_pw   : "123$%^qweRTY"
+simp_options::ldap::bind_hash : "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
+simp_options::ldap::sync_dn   : "cn=LDAPSync,ou=Hosts,%{hiera('ldap::base_dn')}"
+simp_options::ldap::sync_pw   : "123$%^qweRTY"
+simp_options::ldap::sync_hash : "{SSHA}xr8JTXnSdOlqFJfP6tNwDNmGfGKKhdbr"
+simp_options::ldap::root_dn   : "cn=LDAPAdmin,ou=People,%{hiera('ldap::base_dn')}"
+simp_options::ldap::root_hash : "{SSHA}cbyG41/oc3qhJkUpkrjqz60ZUizBxTHJ"
+simp_options::ldap::master    : "ldap://<%= simp_server.reachable_name %>"
+simp_options::ldap::uri:
     - "ldap://<%= simp_server.reachable_name %>"

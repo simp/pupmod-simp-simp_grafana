@@ -7,31 +7,33 @@ require 'pathname'
 
 # RSpec Material
 fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
-module_name = File.basename(File.expand_path(File.join(__FILE__, '../..')))
+module_name = File.basename(File.expand_path(File.join(__FILE__,'../..')))
 
 # Add fixture lib dirs to LOAD_PATH. Work-around for PUP-3336
-if Puppet.version < '4.0.0'
+if Puppet.version < "4.0.0"
   Dir["#{fixture_path}/modules/*/lib"].entries.each do |lib_dir|
     $LOAD_PATH << lib_dir
   end
 end
 
-unless ENV.key?('TRUSTED_NODE_DATA')
+
+if !ENV.key?( 'TRUSTED_NODE_DATA' )
   warn '== WARNING: TRUSTED_NODE_DATA is unset, using TRUSTED_NODE_DATA=yes'
-  ENV['TRUSTED_NODE_DATA'] = 'yes'
+  ENV['TRUSTED_NODE_DATA']='yes'
 end
 
-default_hiera_config = <<-EOM
+default_hiera_config =<<-EOM
 ---
 :backends:
-  - 'rspec'
-  - 'yaml'
+  - "rspec"
+  - "yaml"
 :yaml:
-  :datadir: 'stub'
+  :datadir: "stub"
 :hierarchy:
   - "%{custom_hiera}"
+  - "%{spec_title}"
   - "%{module_name}"
-  - 'default'
+  - "default"
 EOM
 
 # This can be used from inside your spec tests to set the testable environment.
@@ -44,8 +46,8 @@ EOM
 #   ...
 # end
 #
-def set_environment(environment = :production) # rubocop:disable Style/AccessorMethodName
-  RSpec.configure { |config| config.default_facts['environment'] = environment.to_s }
+def set_environment(environment = :production)
+    RSpec.configure { |c| c.default_facts['environment'] = environment.to_s }
 end
 
 # This can be used from inside your spec tests to load custom hieradata within
@@ -66,16 +68,16 @@ end
 # 'default.yaml' and <module_name>.yaml per the defaults above.
 #
 # Note: Any colons (:) are replaced with underscores (_) in the class name.
-def set_hieradata(hieradata) # rubocop:disable Style/AccessorMethodName
-  RSpec.configure { |config| config.default_facts['custom_hiera'] = hieradata }
+def set_hieradata(hieradata)
+    RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
 end
 
-unless File.directory?(File.join(fixture_path, 'hieradata'))
-  FileUtils.mkdir_p(File.join(fixture_path, 'hieradata'))
+if not File.directory?(File.join(fixture_path,'hieradata')) then
+  FileUtils.mkdir_p(File.join(fixture_path,'hieradata'))
 end
 
-unless File.directory?(File.join(fixture_path, 'modules', module_name))
-  FileUtils.mkdir_p(File.join(fixture_path, 'modules', module_name))
+if not File.directory?(File.join(fixture_path,'modules',module_name)) then
+  FileUtils.mkdir_p(File.join(fixture_path,'modules',module_name))
 end
 
 RSpec.configure do |c|
@@ -84,8 +86,8 @@ RSpec.configure do |c|
     :production => {
       #:fqdn           => 'production.rspec.test.localdomain',
       :path           => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin',
-      :concat_basedir => '/tmp',
-    },
+      :concat_basedir => '/tmp'
+    }
   }
 
   c.mock_framework = :rspec
@@ -94,12 +96,12 @@ RSpec.configure do |c|
   c.module_path = File.join(fixture_path, 'modules')
   c.manifest_dir = File.join(fixture_path, 'manifests')
 
-  c.hiera_config = File.join(fixture_path, 'hieradata', 'hiera.yaml')
+  c.hiera_config = File.join(fixture_path,'hieradata','hiera.yaml')
 
   # Useless backtrace noise
   backtrace_exclusion_patterns = [
     /spec_helper/,
-    /gems/,
+    /gems/
   ]
 
   if c.respond_to?(:backtrace_exclusion_patterns)
@@ -122,7 +124,7 @@ RSpec.configure do |c|
 
     if defined?(environment)
       set_environment(environment)
-      FileUtils.mkdir_p(File.join(@spec_global_env_temp, environment.to_s))
+      FileUtils.mkdir_p(File.join(@spec_global_env_temp,environment.to_s))
     end
 
     # ensure the user running these tests has an accessible environmentpath
@@ -132,9 +134,9 @@ RSpec.configure do |c|
 
     # sanitize hieradata
     if defined?(hieradata)
-      set_hieradata(hieradata.tr(':', '_'))
+      set_hieradata(hieradata.gsub(':','_'))
     elsif defined?(class_name)
-      set_hieradata(class_name.tr(':', '_'))
+      set_hieradata(class_name.gsub(':','_'))
     end
   end
 
@@ -143,16 +145,12 @@ RSpec.configure do |c|
     FileUtils.rm_rf(@spec_global_env_temp)
     @spec_global_env_temp = nil
   end
-
-  c.after(:suite) do
-    RSpec::Puppet::Coverage.report!
-  end
 end
 
 Dir.glob("#{RSpec.configuration.module_path}/*").each do |dir|
   begin
     Pathname.new(dir).realpath
   rescue
-    raise "ERROR: The module '#{dir}' is not installed. Tests cannot continue."
+    fail "ERROR: The module '#{dir}' is not installed. Tests cannot continue."
   end
 end

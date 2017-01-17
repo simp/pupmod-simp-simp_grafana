@@ -5,11 +5,16 @@
 #
 # @private
 #
-class simp_grafana::config::pki {
+class simp_grafana::config::pki (
+  Variant[Enum['simp'],Boolean] $pki                     = $::simp_grafana::pki,
+  Stdlib::Absolutepath          $app_pki_external_source = $::simp_grafana::app_pki_external_source
+) {
   assert_private()
 
-  include '::pki'
-
-  ::pki::copy { '/etc/grafana': group => 'grafana' }
+  ::pki::copy { 'grafana':
+    pki    => $pki,
+    source => $app_pki_external_source,
+    group  => 'grafana',
+  }
 }
 

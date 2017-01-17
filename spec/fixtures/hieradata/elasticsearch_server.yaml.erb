@@ -16,7 +16,7 @@ simp_elasticsearch::simp_apache::ssl_verify_client: 'none'
 apache::rsync_web_root: false
 simp_apache::rsync_web_root: false
 
-rsync::server : "%{::fqdn}"
+simp_options::rsync::server : "%{facts['fqdn']}"
 
-use_simp_pki : false
-pki_dir: '/etc/pki/simp-testing/pki'
+simp_options::pki : 'simp'
+simp_options::pki:source: '/etc/pki/simp-testing/pki'

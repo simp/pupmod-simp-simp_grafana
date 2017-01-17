@@ -49,7 +49,7 @@ describe 'the grafana server' do
 
         # Allow SSH from the standard Vagrant nets
         iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
+          client_nets => hiera('simp_options::trusted_nets'),
           dports      => '22',
         }
       EOS
@@ -125,9 +125,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
       EOS
     end
@@ -191,9 +191,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
       EOS
     end
@@ -217,9 +217,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
       EOS
     end
@@ -274,9 +274,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
       EOS
     end
@@ -331,9 +331,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
 
         grafana_datasource { 'elasticsearch':
@@ -394,9 +394,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports      => 22,
         }
       EOS
     end
