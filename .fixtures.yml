@@ -6,7 +6,9 @@ fixtures:
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     concat: https://github.com/puppetlabs/puppetlabs-concat
     datacat: https://github.com/simp/puppet-datacat
-    elasticsearch: https://github.com/nick-markowski/puppet-elasticsearch
+    elasticsearch:
+      repo: https://github.com/simp/puppet-elasticsearch
+      branch: simp-master
     file_concat: https://github.com/simp/puppet-lib-file_concat
     grafana: https://github.com/simp/puppet-grafana
     haveged:

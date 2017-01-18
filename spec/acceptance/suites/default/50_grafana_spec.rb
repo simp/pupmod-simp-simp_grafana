@@ -31,7 +31,7 @@ describe 'the grafana server' do
 
     # This would normally be required on the Puppet compile masters.
     if grafana[:type] == 'aio'
-      on(grafana, 'puppetserver gem install rubygem-toml')
+      on(grafana, '/opt/puppetlabs/bin/puppet resource package toml ensure=present provider=puppet_gem')
     else
       grafana.install_package('rubygem-toml')
     end
@@ -48,9 +48,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
+        iptables::listen::tcp_stateful { 'allow_ssh':
           trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => '22',
+          dports       => 22,
         }
       EOS
     end
@@ -75,21 +75,21 @@ describe 'the grafana server' do
       it { is_expected.to be_running }
     end
 
-    describe x509_certificate("/etc/pki/simp_apps/grafana/x509/pki/public/#{grafana_fqdn}.pub") do
+    describe x509_certificate("/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub") do
       it { is_expected.to be_certificate }
     end
 
-    describe file("/etc/pki/simp_apps/grafana/x509/pki/public/#{grafana_fqdn}.pub") do
+    describe file("/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub") do
       it { is_expected.to be_grouped_into 'grafana' }
       it { is_expected.to be_readable.by_user 'grafana' }
     end
 
-    describe x509_private_key("/etc/pki/simp_apps/grafana/x509/pki/private/#{grafana_fqdn}.pem") do
+    describe x509_private_key("/etc/pki/simp_apps/grafana/x509/private/#{grafana_fqdn}.pem") do
       it { is_expected.to be_valid }
-      it { is_expected.to have_matching_certificate "/etc/pki/simp_apps/grafana/x509/pki/public/#{grafana_fqdn}.pub" }
+      it { is_expected.to have_matching_certificate "/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub" }
     end
 
-    describe file("/etc/pki/simp_apps/grafana/x509/pki/private/#{grafana_fqdn}.pem") do
+    describe file("/etc/pki/simp_apps/grafana/x509/private/#{grafana_fqdn}.pem") do
       it { is_expected.to be_grouped_into 'grafana' }
       it { is_expected.to be_readable.by_user 'grafana' }
       it { is_expected.not_to be_readable.by 'others' }
@@ -327,7 +327,7 @@ describe 'the grafana server' do
         # Allow SSH from the standard Vagrant nets
         iptables::listen::tcp_stateful { 'allow_ssh':
           trusted_nets => hiera('simp_options::trusted_nets'),
-          dports      => 22,
+          dports       => 22,
         }
 
         grafana_datasource { 'elasticsearch':
