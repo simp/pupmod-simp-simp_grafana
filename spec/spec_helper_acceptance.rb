@@ -4,6 +4,8 @@ require 'yaml'
 require 'simp/beaker_helpers'
 include Simp::BeakerHelpers
 
+FIXTURE_DIR = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
+
 unless ENV['BEAKER_provision'] == 'no'
   hosts.each do |host|
     # Install Puppet
