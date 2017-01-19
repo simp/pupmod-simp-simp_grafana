@@ -17,7 +17,7 @@ class simp_grafana::params {
   $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem"
   $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub"
 
-  $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => 'dc=invalid' } )
+  $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn() } )
   $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
   $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
 
