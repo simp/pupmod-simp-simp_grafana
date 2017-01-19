@@ -13,12 +13,9 @@ class simp_grafana::params {
 
   $admin_pw = passgen('grafana')
 
-  $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false })
-  $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' })
   $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509'
   $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem"
   $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub"
-  $app_pki_ca_dir          = "${app_pki_dir}/cacerts"
 
   $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => 'dc=invalid' } )
   $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )

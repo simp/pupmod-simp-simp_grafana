@@ -29,8 +29,38 @@
 # @param firewall If true, manage firewall rules to
 #   acommodate simp_grafana.
 #
-# @param pki If true, manage PKI/PKE configuration for
-#   `simp_grafana`.
+# @param pki
+#   * If 'simp', include SIMP's pki module and use pki::copy to manage
+#     application certs in /etc/pki/simp_apps/grafana/x509
+#   * If true, do *not* include SIMP's pki module, but still use pki::copy
+#     to manage certs in /etc/pki/simp_apps/grafana/x509
+#   * If false, do not include SIMP's pki module and do not use pki::copy
+#     to manage certs.  You will need to appropriately assign a subset of:
+#     * app_pki_dir
+#     * app_pki_key
+#     * app_pki_cert
+#     * app_pki_ca
+#     * app_pki_ca_dir
+#
+# @param app_pki_external_source
+#   * If pki = 'simp' or true, this is the directory from which certs will be
+#     copied, via pki::copy.  Defaults to /etc/pki/simp/x509.
+#
+#   * If pki = false, this variable has no effect.
+#
+# @param app_pki_dir
+#   NOTE: Controlled in params.pp
+#   This variable controls the basepath of $app_pki_key, $app_pki_cert,
+#   $app_pki_ca, $app_pki_ca_dir, and $app_pki_crl.
+#   It defaults to /etc/pki/simp_apps/grafana/x509.
+#
+# @param app_pki_key
+#   NOTE: Controlled in params.pp
+#   Path and name of the private SSL key file
+#
+# @param app_pki_cert
+#   NOTE: Controlled in params.pp
+#   Path and name of the public SSL certificate
 #
 # @param cfg A passthrough to the Grafana component module, this will be
 #   merged with the SIMP defaults in `::simp_grafana::params`.
@@ -92,17 +122,18 @@
 # @author Lucas Yamanishi <lucas.yamanishi@onyxpoint.com>
 #
 class simp_grafana (
-  Simplib::Netlist              $trusted_nets      = $::simp_grafana::params::trusted_nets,
-  Boolean                       $firewall          = $::simp_grafana::params::firewall,
-  Variant[Boolean,Enum['simp']] $pki               = $::simp_grafana::params::pki,
-  Hash                          $cfg               = {},
-  Hash                          $ldap_cfg          = {},
-  String                        $install_method    = 'repo',
-  Boolean                       $use_internet_repo = false,
+  Simplib::Netlist              $trusted_nets            = $::simp_grafana::params::trusted_nets,
+  Boolean                       $firewall                = $::simp_grafana::params::firewall,
+  Variant[Boolean,Enum['simp']] $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false }),
+  Stdlib::Absolutepath          $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
+  Hash                          $cfg                     = {},
+  Hash                          $ldap_cfg                = {},
+  String                        $install_method          = 'repo',
+  Boolean                       $use_internet_repo       = false,
   # Need to set the version numbers until the upstream module can support "latest"
-  String                        $version           = '3.1.1',
-  String                        $rpm_iteration     = '1470047149',
-  Boolean                       $simp_dashboards   = false
+  String                        $version                 = '3.1.1',
+  String                        $rpm_iteration           = '1470047149',
+  Boolean                       $simp_dashboards         = false
 ) inherits ::simp_grafana::params {
 
   $merged_cfg = deep_merge($::simp_grafana::params::cfg, $cfg)

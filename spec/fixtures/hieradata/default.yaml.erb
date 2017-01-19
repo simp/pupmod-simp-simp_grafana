@@ -6,9 +6,6 @@
 # Test networks *should* be secure, but just in case, enable IPTables.
 simp_options::firewall : true
 
-simp_options::pki : true
-simp_options::pki::source: '/etc/pki/simp-testing/pki'
-
 # IPv4 networks to allow using SIMP defaults.  (CIDR notation or `ALL`)
 # Set to Beaker, Vagrant & Libvirt defaults, plus the loopback network.
 simp_options::trusted_nets:

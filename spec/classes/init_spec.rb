@@ -32,6 +32,8 @@ describe 'simp_grafana' do
         end
         it { is_expected.not_to contain_class('simp_grafana::config::pki') }
         it { is_expected.not_to contain_pki__copy('grafana').with_source('/etc/pki/simp/x509') }
+        it { is_expected.not_to contain_class('pki')}
+        it { is_expected.not_to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
 
       context 'when firewall management is enabled' do
@@ -63,13 +65,17 @@ describe 'simp_grafana' do
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::pki') }
         it { is_expected.to contain_pki__copy('grafana').with_source('/etc/pki/simp/x509') }
+        it { is_expected.to contain_class('pki')}
+        it { is_expected.to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
 
       context 'when PKI management is disabled' do
-        let(:params) { { :pki => false } }
+        let(:params) { { :pki => true } }
         it_behaves_like 'a structured module'
-        it { is_expected.not_to contain_class('simp_grafana::config::pki') }
-        it { is_expected.not_to contain_pki__copy('grafana') }
+        it { is_expected.to contain_class('simp_grafana::config::pki') }
+        it { is_expected.to contain_pki__copy('grafana') }
+        it { is_expected.not_to contain_class('pki')}
+        it { is_expected.to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
     end
   end
