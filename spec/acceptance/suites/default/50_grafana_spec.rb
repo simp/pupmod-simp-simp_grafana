@@ -31,7 +31,7 @@ describe 'the grafana server' do
 
     # This would normally be required on the Puppet compile masters.
     if grafana[:type] == 'aio'
-      on(grafana, 'puppetserver gem install rubygem-toml')
+      on(grafana, '/opt/puppetlabs/bin/puppet resource package toml ensure=present provider=puppet_gem')
     else
       grafana.install_package('rubygem-toml')
     end
@@ -48,9 +48,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end
@@ -75,21 +75,21 @@ describe 'the grafana server' do
       it { is_expected.to be_running }
     end
 
-    describe x509_certificate("/etc/grafana/pki/public/#{grafana_fqdn}.pub") do
+    describe x509_certificate("/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub") do
       it { is_expected.to be_certificate }
     end
 
-    describe file("/etc/grafana/pki/public/#{grafana_fqdn}.pub") do
+    describe file("/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub") do
       it { is_expected.to be_grouped_into 'grafana' }
       it { is_expected.to be_readable.by_user 'grafana' }
     end
 
-    describe x509_private_key("/etc/grafana/pki/private/#{grafana_fqdn}.pem") do
+    describe x509_private_key("/etc/pki/simp_apps/grafana/x509/private/#{grafana_fqdn}.pem") do
       it { is_expected.to be_valid }
-      it { is_expected.to have_matching_certificate "/etc/grafana/pki/public/#{grafana_fqdn}.pub" }
+      it { is_expected.to have_matching_certificate "/etc/pki/simp_apps/grafana/x509/public/#{grafana_fqdn}.pub" }
     end
 
-    describe file("/etc/grafana/pki/private/#{grafana_fqdn}.pem") do
+    describe file("/etc/pki/simp_apps/grafana/x509/private/#{grafana_fqdn}.pem") do
       it { is_expected.to be_grouped_into 'grafana' }
       it { is_expected.to be_readable.by_user 'grafana' }
       it { is_expected.not_to be_readable.by 'others' }
@@ -100,7 +100,7 @@ describe 'the grafana server' do
     end
 
     describe iptables do
-      it "allows traffic from `client_nets` to port #{grafana_port}" do
+      it "allows traffic from `trusted_nets` to port #{grafana_port}" do
         is_expected.to have_rule("-s 127.0.0.0/8 -p tcp -m state --state NEW -m tcp -m multiport --dports #{grafana_port} -j ACCEPT").
           with_chain('LOCAL-INPUT')
       end
@@ -125,9 +125,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end
@@ -180,7 +180,7 @@ describe 'the grafana server' do
 
   context 'with LDAP enabled via the global catalyst' do
     before(:all) do
-      context_hieradata = "---\nuse_ldap: true"
+      context_hieradata = "---\nsimp_options::ldap: true"
       write_hieradata_to grafana, context_hieradata, 'context'
     end
     after(:all) { write_hieradata_to grafana, "---\n", 'context' }
@@ -191,9 +191,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end
@@ -217,9 +217,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end
@@ -245,10 +245,7 @@ describe 'the grafana server' do
             servers         => [
               {
                 host                  => '#{simp_fqdn}',
-                # XXX: If we don't use arithmetic here Puppet 3.x will convert
-                # the Integer to a String when passing it to Ruby, and Grafana will
-                # fail to start due to the invalid type.
-                port                  => 635 + 1,
+                port                  => 636,
                 use_ssl               => true,
                 ssl_skip_verify       => true,
                 bind_dn               => 'uid=grafana,ou=Services,dc=test',
@@ -274,9 +271,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end
@@ -302,10 +299,7 @@ describe 'the grafana server' do
             servers         => [
               {
                 host                  => '#{simp_fqdn}',
-                # XXX: If we don't use arithmetic here Puppet 3.x will convert
-                # the Integer to a String when passing it to Ruby, and Grafana will
-                # fail to start due to the invalid type.
-                port                  => 635 + 1,
+                port                  => 636,
                 use_ssl               => true,
                 ssl_skip_verify       => true,
                 bind_dn               => 'uid=grafana,ou=Services,dc=test',
@@ -331,9 +325,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
 
         grafana_datasource { 'elasticsearch':
@@ -394,9 +388,9 @@ describe 'the grafana server' do
         }
 
         # Allow SSH from the standard Vagrant nets
-        iptables::add_tcp_stateful_listen { 'allow_ssh':
-          client_nets => hiera('client_nets'),
-          dports      => '22',
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
         }
       EOS
     end

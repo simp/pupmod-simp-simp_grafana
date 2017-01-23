@@ -3,4 +3,4 @@
 # + deep merge with params::ldap_cfg (which cannot be overridden since each cfg
 # is an array element and simp_grafana::ldap_cfg does not default to the
 # params:: version ) in init.pp
-ldap::bind_pw   : "123$%^qweRTY"
+simp_options::ldap::bind_pw   : "123$%^qweRTY"

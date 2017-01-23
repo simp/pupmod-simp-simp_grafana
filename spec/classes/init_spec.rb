@@ -20,9 +20,9 @@ describe 'simp_grafana' do
       context 'without any parameters' do
         let(:params) { {} }
         it_behaves_like 'a structured module'
-        it { is_expected.to contain_class('simp_grafana').with_client_nets(['127.0.0.0/8']) }
-        it { is_expected.to contain_class('simp_grafana::config::firewall') }
-        it { is_expected.to create_iptables__add_tcp_stateful_listen('allow_simp_grafana_tcp_connections').with_dports('8443') }
+        it { is_expected.to contain_class('simp_grafana').with_trusted_nets(['127.0.0.0/8']) }
+        it { is_expected.not_to contain_class('simp_grafana::config::firewall') }
+        it { is_expected.not_to create_iptables__add_tcp_stateful_listen('allow_simp_grafana_tcp_connections').with_dports('8443') }
         it 'grants revoke_grafana_cap to grafana-server' do
           is_expected.to create_exec('revoke_grafana_caps').with(
             'command' => 'setcap -r /usr/sbin/grafana-server',
@@ -30,26 +30,27 @@ describe 'simp_grafana' do
             'path'    => ['/usr/bin', '/usr/sbin', '/bin', '/sbin']
           ).that_requires('Class[grafana::config]').that_notifies('Class[grafana::service]')
         end
-        it { is_expected.to contain_class('simp_grafana::config::pki') }
-        it { is_expected.to contain_pki__copy('/etc/grafana') }
+        it { is_expected.not_to contain_class('simp_grafana::config::pki') }
+        it { is_expected.not_to contain_pki__copy('grafana').with_source('/etc/pki/simp/x509') }
+        it { is_expected.not_to contain_class('pki')}
+        it { is_expected.not_to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
 
-      context 'when firewall management is disabled' do
-        let(:params) { { :enable_firewall => false } }
+      context 'when firewall management is enabled' do
+        let(:params) { { :firewall => true } }
         it_behaves_like 'a structured module'
-        it { is_expected.not_to contain_class('simp_grafana::config::firewall') }
-        it { is_expected.not_to create_iptables__add_tcp_stateful_listen('allow_simp_grafana_tcp_connections').with_dports('8443') }
+        it { is_expected.to contain_class('simp_grafana::config::firewall') }
+        it { is_expected.to create_iptables__listen__tcp_stateful('allow_simp_grafana_tcp_connections').with_dports(8443) }
       end
 
       context 'when set to use a non-default port' do
-        let(:params) do
-          {
-            :cfg => { 'server' => { 'http_port' => 3000 } },
-          }
-        end
+        let(:params) {{
+          :firewall => true,
+          :cfg => { 'server' => { 'http_port' => 3000 } },
+        }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::firewall') }
-        it { is_expected.to create_iptables__add_tcp_stateful_listen('allow_simp_grafana_tcp_connections').with_dports('3000') }
+        it { is_expected.to create_iptables__listen__tcp_stateful('allow_simp_grafana_tcp_connections').with_dports(3000) }
         it 'revokes all Linux capabilities from grafana-server' do
           is_expected.to create_exec('revoke_grafana_caps').with(
             'command' => 'setcap -r /usr/sbin/grafana-server',
@@ -59,11 +60,22 @@ describe 'simp_grafana' do
         end
       end
 
-      context 'when PKI managemnt is disabled' do
-        let(:params) { { :enable_pki => false } }
+      context "when pki management is set to 'simp'" do
+        let(:params) { { :pki => 'simp' } }
         it_behaves_like 'a structured module'
-        it { is_expected.not_to contain_class('simp_grafana::config::pki') }
-        it { is_expected.not_to contain_pki__copy('/etc/grafana') }
+        it { is_expected.to contain_class('simp_grafana::config::pki') }
+        it { is_expected.to contain_pki__copy('grafana').with_source('/etc/pki/simp/x509') }
+        it { is_expected.to contain_class('pki')}
+        it { is_expected.to create_file('/etc/pki/simp_apps/grafana/x509')}
+      end
+
+      context 'when PKI management is disabled' do
+        let(:params) { { :pki => true } }
+        it_behaves_like 'a structured module'
+        it { is_expected.to contain_class('simp_grafana::config::pki') }
+        it { is_expected.to contain_pki__copy('grafana') }
+        it { is_expected.not_to contain_class('pki')}
+        it { is_expected.to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
     end
   end

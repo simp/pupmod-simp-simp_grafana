@@ -19,43 +19,73 @@
 #   manage security compliance settings from the Puppet server.
 #
 # * If used independently, all SIMP-managed security subsystems may be disabled
-#   via the `enable_firewall` and `enable_pki` settings.
+#   via the `firewall` and `pki` settings.
 #
 ## Parameters
 #
-# @param client_nets [Array<String>] (['127.0.0.0/8']) A whitelist of subnets
+# @param trusted_nets A whitelist of subnets
 #   (in CIDR notation) permitted access.
 #
-# @param enable_firewall [Boolean] (false) If true, manage firewall rules to
+# @param firewall If true, manage firewall rules to
 #   acommodate simp_grafana.
 #
-# @param enable_pki [Boolean] (false) If true, manage PKI/PKE configuration for
-#   `simp_grafana`.
+# @param pki
+#   * If 'simp', include SIMP's pki module and use pki::copy to manage
+#     application certs in /etc/pki/simp_apps/grafana/x509
+#   * If true, do *not* include SIMP's pki module, but still use pki::copy
+#     to manage certs in /etc/pki/simp_apps/grafana/x509
+#   * If false, do not include SIMP's pki module and do not use pki::copy
+#     to manage certs.  You will need to appropriately assign a subset of:
+#     * app_pki_dir
+#     * app_pki_key
+#     * app_pki_cert
+#     * app_pki_ca
+#     * app_pki_ca_dir
 #
-# @param cfg [Hash] A passthrough to the Grafana component module, this will be
+# @param app_pki_external_source
+#   * If pki = 'simp' or true, this is the directory from which certs will be
+#     copied, via pki::copy.  Defaults to /etc/pki/simp/x509.
+#
+#   * If pki = false, this variable has no effect.
+#
+# @param app_pki_dir
+#   NOTE: Controlled in params.pp
+#   This variable controls the basepath of $app_pki_key, $app_pki_cert,
+#   $app_pki_ca, $app_pki_ca_dir, and $app_pki_crl.
+#   It defaults to /etc/pki/simp_apps/grafana/x509.
+#
+# @param app_pki_key
+#   NOTE: Controlled in params.pp
+#   Path and name of the private SSL key file
+#
+# @param app_pki_cert
+#   NOTE: Controlled in params.pp
+#   Path and name of the public SSL certificate
+#
+# @param cfg A passthrough to the Grafana component module, this will be
 #   merged with the SIMP defaults in `::simp_grafana::params`.
 #
-# @param ldap_cfg [Hash] A passthrough to the Grafana component module.
+# @param ldap_cfg A passthrough to the Grafana component module.
 #   Unlike the `cfg` param, this does not currently merge with any defaults, but
 #   is provided as a convinence.
 #   @note If using Puppet 3.x, Integer values in this Hash must be declared with
 #     arithmetic expression to avoid converison to a String.  For example, to
 #     set a value to `1`, the value should be declared as `0 + 1`.
 #
-# @param install_method [String] A passthrough to the Grafana module, this sets
+# @param install_method A passthrough to the Grafana module, this sets
 #   the installation method of Grafana to a repository by default since this is
 #   the SIMP preferred method for installing packages.
 #
-# @param use_intenet_repo [Boolean] If set, allow the ::grafana module to point
+# @param use_intenet_repo If set, allow the ::grafana module to point
 #   to the appropriate package repository on the Internet automatically.
 #
 ## Examples
 #
 # @example Resource-style class declaration
 #   class { 'simp_grafana':
-#     enable_firewall => true,
-#     enable_pki      => true,
-#     client_nets     => ['10.255.0.0/16'],
+#     firewall => true,
+#     pki      => true,
+#     trusted_nets     => ['10.255.0.0/16'],
 #     cfg             => { 'auth.ldap' => { enabled => true } },
 #     ldap_cfg        => {
 #       verbose_logging => true,
@@ -89,30 +119,22 @@
 #     },
 #   }
 #
-## Authors
-#
 # @author Lucas Yamanishi <lucas.yamanishi@onyxpoint.com>
 #
 class simp_grafana (
-  $client_nets       = $::simp_grafana::params::client_nets,
-  $enable_firewall   = $::simp_grafana::params::enable_firewall,
-  $enable_pki        = $::simp_grafana::params::enable_pki,
-  $cfg               = {},
-  $ldap_cfg          = {},
-  $install_method    = 'repo',
-  $use_internet_repo = false,
-#Need to set the version numbers until the upstream module can support "latest"
-  $version           = '3.1.1',
-  $rpm_iteration     = '1470047149',
-  $simp_dashboards   = false
+  Simplib::Netlist              $trusted_nets            = $::simp_grafana::params::trusted_nets,
+  Boolean                       $firewall                = $::simp_grafana::params::firewall,
+  Variant[Boolean,Enum['simp']] $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false }),
+  Stdlib::Absolutepath          $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
+  Hash                          $cfg                     = {},
+  Hash                          $ldap_cfg                = {},
+  String                        $install_method          = 'repo',
+  Boolean                       $use_internet_repo       = false,
+  # Need to set the version numbers until the upstream module can support "latest"
+  String                        $version                 = '3.1.1',
+  String                        $rpm_iteration           = '1470047149',
+  Boolean                       $simp_dashboards         = false
 ) inherits ::simp_grafana::params {
-
-  validate_array($client_nets)
-  validate_bool($enable_firewall)
-  validate_bool($enable_pki)
-  validate_hash($cfg)
-  validate_hash($ldap_cfg)
-  validate_bool($use_internet_repo)
 
   $merged_cfg = deep_merge($::simp_grafana::params::cfg, $cfg)
   $merged_ldap_cfg = deep_merge($::simp_grafana::params::ldap_cfg, $ldap_cfg)
@@ -137,11 +159,11 @@ class simp_grafana (
     }
   }
 
-  if $enable_firewall {
+  if $firewall {
     include '::simp_grafana::config::firewall'
   }
 
-  if $enable_pki {
+  if $pki {
     include '::simp_grafana::config::pki'
     Class['grafana'] -> Class['simp_grafana::config::pki']
   }

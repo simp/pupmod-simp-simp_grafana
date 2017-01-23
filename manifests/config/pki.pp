@@ -5,11 +5,13 @@
 #
 # @private
 #
-class simp_grafana::config::pki {
+class simp_grafana::config::pki (
+) {
   assert_private()
 
-  include '::pki'
-
-  ::pki::copy { '/etc/grafana': group => 'grafana' }
+  ::pki::copy { 'grafana':
+    source => $::simp_grafana::app_pki_external_source,
+    pki    => $::simp_grafana::pki,
+    group  => 'grafana',
+  }
 }
-

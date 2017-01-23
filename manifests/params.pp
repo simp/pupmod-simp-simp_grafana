@@ -7,24 +7,27 @@
 #
 class simp_grafana::params {
 
-  $client_nets     = defined('$::client_nets')     ? { true => $::client_nets,     default => hiera('client_nets',     ['127.0.0.0/8']) }
-  $enable_firewall = defined('$::enable_firewall') ? { true => $::enable_firewall, default => hiera('enable_firewall', true)            }
-  $enable_pki      = defined('$::enable_pki')      ? { true => $::enable_pki,      default => hiera('enable_pki',      true)            }
-  $use_ldap        = defined('$::use_ldap')        ? { true => $::use_ldap,        default => hiera('use_ldap',        false)           }
+  $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.0/8'] })
+  $firewall     = simplib::lookup('simp_options::firewall', { 'default_value' => false })
+  $ldap         = simplib::lookup('simp_options::ldap', { 'default_value' => false })
 
   $admin_pw = passgen('grafana')
 
-  $base_dn = hiera('ldap::base_dn', 'dc=invalid')
-  $bind_dn = hiera('ldap::bind_dn', "uid=%s,${base_dn}")
-  $bind_pw = hiera('ldap::bind_pw', undef)
+  $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509'
+  $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem"
+  $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub"
 
-  $ldap_urls   = hiera_array('ldap::uri', [''])
+  $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn() } )
+  $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
+  $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
+
+  $ldap_urls   = hiera_array('simp_options::ldap::uri', [''])
   $ldap_url    = $ldap_urls[0]
   $ldap_server = inline_template(
     '<%= @ldap_url.match(/(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]]\.)+(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]])\.?/) %>'
   )
 
-  case $::osfamily {
+  case $facts['osfamily'] {
     'RedHat': { }
     default: {
       fail("${::operatingsystem} not supported")
@@ -36,8 +39,8 @@ class simp_grafana::params {
     server       => {
       http_port => 8443,
       protocol  => 'https',
-      cert_file => "/etc/grafana/pki/public/${::fqdn}.pub",
-      cert_key  => "/etc/grafana/pki/private/${::fqdn}.pem",
+      cert_file => $app_pki_cert,
+      cert_key  => $app_pki_key,
     },
     security     => {
       admin_password   => $admin_pw,
@@ -49,9 +52,9 @@ class simp_grafana::params {
       auto_assign_org  => true,
     },
     'auth.basic' => { enabled => false },
-    'auth.ldap'  => { enabled => $use_ldap },
+    'auth.ldap'  => { enabled => $ldap },
     #Allows SIMP dashboards to be read from the file system
-    'dashboards.json' => {enabled => true},
+    'dashboards.json' => { enabled => true },
   }
 
   $ldap_group_mapping_defaults = [
@@ -63,10 +66,7 @@ class simp_grafana::params {
 
   $ldap_server_defaults = {
     host                  => $ldap_server,
-    # XXX: If we don't use arithmetic here Puppet 3.x will convert
-    # the Integer to a String when passing it to Ruby, and Grafana will
-    # fail to start due to the invalid type.
-    port                  => 635 + 1,
+    port                  => 636,
     use_ssl               => true,
     ssl_skip_verify       => true,
     bind_dn               => $bind_dn,

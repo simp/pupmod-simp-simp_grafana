@@ -31,6 +31,7 @@ describe 'The fake SIMP server' do
     # pupmod-simp-iptables with SELinux
     apply_manifest_on simp_server, simp_server_manifest, :catch_failures => true
     apply_manifest_on simp_server, simp_server_manifest, :catch_failures => true
+    apply_manifest_on simp_server, simp_server_manifest, :catch_failures => true
   end
 
   it 'executes Puppet idempotently' do
