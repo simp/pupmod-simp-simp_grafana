@@ -139,7 +139,7 @@ class simp_grafana (
   $merged_cfg = deep_merge($::simp_grafana::params::cfg, $cfg)
   $merged_ldap_cfg = deep_merge($::simp_grafana::params::ldap_cfg, $ldap_cfg)
 
-  if $merged_cfg['auth.ldap']['enabled'] { include '::openldap::client' }
+  if $merged_cfg['auth.ldap']['enabled'] { include '::simp_openldap::client' }
 
   if $merged_cfg['server']['http_port'] <= 1024 {
     exec { 'grant_grafana_cap_net_bind_service':

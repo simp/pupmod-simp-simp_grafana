@@ -18,7 +18,6 @@ fixtures:
     java: https://github.com/simp/puppetlabs-java
     logrotate: https://github.com/simp/pupmod-simp-logrotate
     oddjob: https://github.com/simp/pupmod-simp-oddjob
-    openldap: https://github.com/simp/pupmod-simp-openldap
     pam: https://github.com/simp/pupmod-simp-pam
     pki: https://github.com/simp/pupmod-simp-pki
     rsync: https://github.com/simp/pupmod-simp-rsync
@@ -26,6 +25,7 @@ fixtures:
     simp: https://github.com/simp/pupmod-simp-simp
     simp_apache: https://github.com/simp/pupmod-simp-apache
     simp_elasticsearch: https://github.com/simp/pupmod-simp-simp_elasticsearch
+    simp_openldap: https://github.com/simp/pupmod-simp-simp_openldap
     simpcat: https://github.com/simp/pupmod-simp-concat
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
