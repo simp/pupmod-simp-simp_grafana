@@ -1,4 +1,7 @@
-* Thu Mar 09 2017 Liz Nemsick <liz.nemsick-simp@gmail.com>, 1.0.2-0
+* Fri Mar 23 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 1.0.3-0
+- Fixed the Beaker tests
+
+* Thu Mar 09 2017 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.2-0
 - Update grafana GPG key used in acceptance test
 
 * Mon Jan 23 2017 Nick Miller <nick.miller@onyxpoint.com>, Jeanne Greulich <jeannegreulich@onyxpoint.com> - 1.0.1-0
