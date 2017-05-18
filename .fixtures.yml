@@ -23,11 +23,7 @@ fixtures:
       repo: https://github.com/simp/puppet-lib-file_concat
       ref: simp6.0.0-1.0.1
     grafana: 
-# FIXME Use newer version than is available in our fork
-# voxpupuli/puppet-grafana is a fork of bfraser/puppet-grafana
-# that is (1) more current than its parent and (2) the
-# forge-recommended module
-      repo: https://github.com/voxpupuli/puppet-grafana
+      repo: https://github.com/simp/puppet-grafana
       ref: v3.0.0
     haveged:
       repo: https://github.com/simp/puppet-haveged
