@@ -129,7 +129,7 @@ class simp_grafana (
   Hash                          $ldap_cfg                = {},
   String                        $install_method          = 'repo',
   Boolean                       $use_internet_repo       = false,
-  String                        $version                 = 'latest',
+  String                        $version                 = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
   String                        $rpm_iteration           = '1',
   Boolean                       $simp_dashboards         = false
 ) inherits ::simp_grafana::params {
