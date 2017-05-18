@@ -55,8 +55,8 @@ class simp_grafana::params {
     'auth.ldap'  => { enabled => $ldap },
     #Allows SIMP dashboards to be read from the file system
     'dashboards.json' => { enabled => true },
-     analytics   => { reporting_enabled => false },
-     snapshot    => { external_enabled => false },
+    analytics   => { reporting_enabled => false },
+    snapshot    => { external_enabled => false },
   }
 
   $ldap_group_mapping_defaults = [
