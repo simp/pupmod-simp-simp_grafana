@@ -1,5 +1,5 @@
-Requires: pupmod-bfraser-grafana < 3.0.0-0
-Requires: pupmod-bfraser-grafana >= 2.5.0-0
+Requires: pupmod-puppet-grafana < 4.0.0-0
+Requires: pupmod-puppet-grafana >= 3.0.0-0
 Requires: pupmod-puppetlabs-stdlib < 5.0.0-0
 Requires: pupmod-puppetlabs-stdlib >= 4.13.1-0
 Requires: pupmod-simp-iptables < 7.0.0-0

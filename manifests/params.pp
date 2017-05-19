@@ -21,7 +21,7 @@ class simp_grafana::params {
   $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
   $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
 
-  $ldap_urls   = hiera_array('simp_options::ldap::uri', [''])
+  $ldap_urls   = simplib::lookup('simp_options::ldap::uri', { 'default_value' => [''] } )
   $ldap_url    = $ldap_urls[0]
   $ldap_server = inline_template(
     '<%= @ldap_url.match(/(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]]\.)+(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]])\.?/) %>'
@@ -55,6 +55,8 @@ class simp_grafana::params {
     'auth.ldap'  => { enabled => $ldap },
     #Allows SIMP dashboards to be read from the file system
     'dashboards.json' => { enabled => true },
+    analytics   => { reporting_enabled => false },
+    snapshot    => { external_enabled => false },
   }
 
   $ldap_group_mapping_defaults = [

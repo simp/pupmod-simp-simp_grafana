@@ -1,8 +1,8 @@
 ## Class: simp_grafana
 #
 # This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved
-# Grafana module written and maintained by Bill Fraser.  It sets a basline of
-# secure defaults and integrates Grafan with other SIMP components.
+# Grafana module written and maintained by Bill Fraser.  It sets a baseline of
+# secure defaults and integrates Grafana with other SIMP components.
 #
 # @note If SIMP integration is not required, direct use of the component Grafana
 #   module is advised.
@@ -27,7 +27,7 @@
 #   (in CIDR notation) permitted access.
 #
 # @param firewall If true, manage firewall rules to
-#   acommodate simp_grafana.
+#   accommodate simp_grafana.
 #
 # @param pki
 #   * If 'simp', include SIMP's pki module and use pki::copy to manage
@@ -66,8 +66,7 @@
 #   merged with the SIMP defaults in `::simp_grafana::params`.
 #
 # @param ldap_cfg A passthrough to the Grafana component module.
-#   Unlike the `cfg` param, this does not currently merge with any defaults, but
-#   is provided as a convinence.
+#   merged with the SIMP defaults in `::simp_grafana::params`.
 #   @note If using Puppet 3.x, Integer values in this Hash must be declared with
 #     arithmetic expression to avoid converison to a String.  For example, to
 #     set a value to `1`, the value should be declared as `0 + 1`.
@@ -76,7 +75,7 @@
 #   the installation method of Grafana to a repository by default since this is
 #   the SIMP preferred method for installing packages.
 #
-# @param use_intenet_repo If set, allow the ::grafana module to point
+# @param use_internet_repo If set, allow the ::grafana module to point
 #   to the appropriate package repository on the Internet automatically.
 #
 ## Examples
@@ -130,9 +129,8 @@ class simp_grafana (
   Hash                          $ldap_cfg                = {},
   String                        $install_method          = 'repo',
   Boolean                       $use_internet_repo       = false,
-  # Need to set the version numbers until the upstream module can support "latest"
-  String                        $version                 = '3.1.1',
-  String                        $rpm_iteration           = '1470047149',
+  String                        $version                 = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
+  String                        $rpm_iteration           = '1',
   Boolean                       $simp_dashboards         = false
 ) inherits ::simp_grafana::params {
 
