@@ -1,6 +1,7 @@
 ---
 # This data is used by puppetsync to add extra `gem` statements to the
 # standardized Gemfile.
+#
 extra_gems:
   groups:
     test:
