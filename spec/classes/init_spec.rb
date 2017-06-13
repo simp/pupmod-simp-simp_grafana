@@ -77,6 +77,20 @@ describe 'simp_grafana' do
         it { is_expected.not_to contain_class('pki')}
         it { is_expected.to create_file('/etc/pki/simp_apps/grafana/x509')}
       end
+
+
+      context 'when ldap is false' do
+        let(:params) { {:ldap => false} }
+        it_behaves_like 'a structured module'
+        it { is_expected.to contain_class('grafana').with_ldap_cfg( {} ) }
+      end
+
+
+      context 'when ldap is true' do
+        let(:params) { {:ldap => true} }
+        it 'is expected to contain class grafana with ldap_cfg'
+      end
+
     end
   end
 

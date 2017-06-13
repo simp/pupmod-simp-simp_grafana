@@ -127,8 +127,9 @@
 # @author Lucas Yamanishi <lucas.yamanishi@onyxpoint.com>
 #
 class simp_grafana (
-  Simplib::Netlist              $trusted_nets            = $::simp_grafana::params::trusted_nets,
-  Boolean                       $firewall                = $::simp_grafana::params::firewall,
+  Simplib::Netlist              $trusted_nets            = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.0/8'] }),
+  Boolean                       $firewall                = simplib::lookup('simp_options::firewall', { 'default_value' => false }),
+  Boolean                       $ldap                    = simplib::lookup('simp_options::ldap', { 'default_value' => false }),
   Variant[Boolean,Enum['simp']] $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false }),
   String                        $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
   Hash                          $cfg                     = {},
@@ -137,11 +138,88 @@ class simp_grafana (
   Boolean                       $use_internet_repo       = false,
   String                        $version                 = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
   String                        $rpm_iteration           = '1',
-  Boolean                       $simp_dashboards         = false
-) inherits ::simp_grafana::params {
+  Boolean                       $simp_dashboards         = false,
+  String                        $admin_pw                = passgen('grafana'),
+  String                        $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509',
+  String                        $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem",
+  String                        $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub",
+ ) inherits ::simp_grafana::params {
 
-  $merged_cfg = deep_merge($::simp_grafana::params::cfg, $cfg)
-  $merged_ldap_cfg = deep_merge($::simp_grafana::params::ldap_cfg, $ldap_cfg)
+  # Static defaults
+  $_cfg = {
+    server       => {
+      http_port => 8443,
+      protocol  => 'https',
+      cert_file => $app_pki_cert,
+      cert_key  => $app_pki_key,
+    },
+    security     => {
+      admin_password   => $admin_pw,
+      disable_gravatar => true,
+    },
+    users        => {
+      allow_sign_up    => false,
+      allow_org_create => true,
+      auto_assign_org  => true,
+    },
+    'auth.basic' => { enabled => false },
+    'auth.ldap'  => { enabled => $ldap },
+    #Allows SIMP dashboards to be read from the file system
+    'dashboards.json' => { enabled => true },
+    analytics   => { reporting_enabled => false },
+    snapshot    => { external_enabled => false },
+  }
+
+  if ($ldap) {
+
+    $ldap_group_mapping_defaults = [
+      { group_dn => 'simp_grafana_admins',     org_role => 'Admin'  },
+      { group_dn => 'simp_grafana_editors',    org_role => 'Editor' },
+      { group_dn => 'simp_grafana_editors_ro', org_role => 'Read Only Editor' },
+      { group_dn => 'simp_grafana_viewers',    org_role => 'Viewer' },
+    ]
+
+    $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn() } )
+    $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
+    $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
+
+    $ldap_urls   = simplib::lookup('simp_options::ldap::uri', { 'default_value' => [''] } )
+    $ldap_url    = $ldap_urls[0]
+    $ldap_server = inline_template(
+      '<%= @ldap_url.match(/(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]]\.)+(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]])\.?/) %>'
+      )
+    $ldap_server_defaults = {
+      host                  => $ldap_server,
+      port                  => 636,
+      use_ssl               => true,
+      ssl_skip_verify       => true,
+      bind_dn               => $bind_dn,
+      bind_password         => $bind_pw,
+      search_filter         => '(uid=%s)',
+      search_base_dns       => ["ou=People,${base_dn}"],
+      group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
+      group_search_base_dns => ["ou=Group,${base_dn}"],
+      attributes            => {
+        name      => 'givenName',
+        surname   => 'sn',
+        username  => 'uid',
+        member_of => 'cn',
+        email     => 'mail',
+      },
+      group_mappings => $ldap_group_mapping_defaults,
+    }
+
+    $_ldap_cfg = {
+      verbose_logging => true,
+      servers         => [ $ldap_server_defaults ],
+    }
+  }
+  else {
+    $_ldap_cfg = {}
+  }
+
+  $merged_cfg = deep_merge($_cfg, $cfg)
+  $merged_ldap_cfg = deep_merge($_ldap_cfg, $ldap_cfg)
 
   if $merged_cfg['auth.ldap']['enabled'] { include '::simp_openldap::client' }
 

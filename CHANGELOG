@@ -1,3 +1,8 @@
+* Wed Oct 03 2018 Scott Armiger <scott.armiger@onyxpoint.com> - 1.1.0-0
+- Fixed a bug in params.pp where it was attempting to configure ldap variables
+  even when $ldap was set to false.
+- Updated to use data in modules when applicable
+
 * Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.0.6-0
 - Updated $app_pki_external_source to accept any string. This matches the
   functionality of pki::copy.
