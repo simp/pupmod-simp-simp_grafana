@@ -1,6 +1,7 @@
 * Tue May 09 2017 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.4-0
 - Update to latest Grafana (4.2.0) and Elasticsearch (5.4.0)
 - simp_grafana::version now defaults to 'latest'
+- Confine puppet version in metadata.json
 
 * Fri Mar 23 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 1.0.3-0
 - Fixed the Beaker tests
