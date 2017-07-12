@@ -31,6 +31,7 @@ HOSTS:
       grafana:
         url: https://packagecloud.io/grafana/stable/el/7/$basearch
         gpgkeys:
+          - https://packagecloud.io/gpg.key
           - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
           - https://raw.githubusercontent.com/simp/simp-core/master/src/assets/simp-gpgkeys/GPGKEYS/RPM-GPG-KEY-grafana-legacy
       epel:

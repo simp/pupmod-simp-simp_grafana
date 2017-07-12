@@ -26,8 +26,8 @@ Module Description
 `Grafana <http://grafana.org/>`__ is a web-based metric and analytics display
 tool, frequently used for log analysis. This module acts as a SIMP wrapper (or
 "profile") for the Puppet, Inc. Approved Grafana module written and maintained
-by Bill Fraser. It sets a baseline of secure defaults and integrates Grafana
-with other SIMP components.
+by Bill Fraser and maintained by Vox Pupuli. It sets a baseline of secure
+defaults and integrates Grafana with other SIMP components.
 
 This is a SIMP module
 ---------------------
@@ -51,7 +51,7 @@ it can be used independently:
    manage security compliance settings from the Puppet server.
 
 -  If used independently, all SIMP-managed security subsystems may be disabled
-   via the ``enable_firewall`` and ``enable_pki`` settings.
+   via the ``simp_options::firewall`` and ``simp_options::pki`` settings.
 
 .. note::
   If SIMP integration is not required, use of this module is discouraged;
@@ -102,7 +102,7 @@ LDAP configuration
 
 LDAP authentication is disabled by default, but defaults are pre-seeded
 for the SIMP OpenLDAP server using the SIMP-standard Hiera keys. To use
-them, simply enable ``use_ldap``.
+them, simply enable ``simp_options::ldap``.
 
 .. code:: puppet
 
@@ -114,7 +114,7 @@ them, simply enable ``use_ldap``.
 
     # Hiera data
     ---
-    use_ldap: true
+    simp_options::ldap: true
 
 This will also set up default group mappings for groups with the CNs
 "simp_grafana_admins," "simp_grafana_editors," "simp_grafana_editors_ro,"
