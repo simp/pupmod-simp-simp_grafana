@@ -1,3 +1,7 @@
+* Wed Jul 12 2017 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.4-0
+- Workaround 2-pass grafana rpm install issue in acceptance tests
+- Update README to reflect SIMP 6 global catalysts.
+
 * Tue May 09 2017 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.4-0
 - Update to latest Grafana (4.2.0) and Elasticsearch (5.4.0)
 - simp_grafana::version now defaults to 'latest'

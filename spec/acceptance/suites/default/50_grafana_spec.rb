@@ -56,6 +56,12 @@ describe 'the grafana server' do
     end
 
     it 'applies without errors' do
+      # this first apply will fail because the grafana RPM installation 
+      # (managed by the grafana module) requires 'yum install grafana -y'
+      # to be called twice. The first time it complains that the grafana
+      # GPG key could not be found, but then succeeds the second time. 
+      apply_manifest_on(grafana, manifest, :accept_all_exit_codes => true)
+
       # We must do this twice before it becomes idempotent due to a bug in
       # pupmod-simp-iptables with SELinux
       apply_manifest_on(grafana, manifest, :catch_failures => true)
