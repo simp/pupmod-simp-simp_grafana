@@ -1,6 +1,6 @@
 ---
 lookup_options:
-  simp_grafana::_cfg:
+  simp_grafana::cfg:
     merge:
       strategy: deep
 

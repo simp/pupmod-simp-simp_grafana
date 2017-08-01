@@ -181,7 +181,7 @@ class simp_grafana (
       { group_dn => 'simp_grafana_viewers',    org_role => 'Viewer' },
     ]
 
-    $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn("example.conf") } )
+    $base_dn = simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn("example.com") } )
     $bind_dn = simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
     $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
 
