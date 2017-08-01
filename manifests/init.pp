@@ -127,7 +127,7 @@
 # @author Lucas Yamanishi <lucas.yamanishi@onyxpoint.com>
 #
 class simp_grafana (
-  Simplib::Netlist              $trusted_nets            = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.0/8'] }),
+  Simplib::Netlist              $trusted_nets            = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1/8'] }),
   Boolean                       $firewall                = simplib::lookup('simp_options::firewall', { 'default_value' => false }),
   Boolean                       $ldap                    = simplib::lookup('simp_options::ldap', { 'default_value' => false }),
   Variant[Boolean,Enum['simp']] $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false }),
@@ -145,29 +145,31 @@ class simp_grafana (
   String                        $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub",
  ) inherits ::simp_grafana::params {
 
+  #assert_metadata_os()
+
   # Static defaults
   $_cfg = {
     server       => {
-      http_port => 8443,
-      protocol  => 'https',
+      # http_port => 8443,
+      # protocol  => 'https',
       cert_file => $app_pki_cert,
       cert_key  => $app_pki_key,
     },
     security     => {
       admin_password   => $admin_pw,
-      disable_gravatar => true,
+      # disable_gravatar => true,
     },
-    users        => {
-      allow_sign_up    => false,
-      allow_org_create => true,
-      auto_assign_org  => true,
-    },
-    'auth.basic' => { enabled => false },
+    # users        => {
+    #   allow_sign_up    => false,
+    #   allow_org_create => true,
+    #   auto_assign_org  => true,
+    # },
+    # 'auth.basic' => { enabled => false },
     'auth.ldap'  => { enabled => $ldap },
     #Allows SIMP dashboards to be read from the file system
-    'dashboards.json' => { enabled => true },
-    analytics   => { reporting_enabled => false },
-    snapshot    => { external_enabled => false },
+    # 'dashboards.json' => { enabled => true },
+    # analytics   => { reporting_enabled => false },
+    # snapshot    => { external_enabled => false },
   }
 
   if ($ldap) {
@@ -184,7 +186,7 @@ class simp_grafana (
     $bind_pw = simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
 
     $ldap_urls   = simplib::lookup('simp_options::ldap::uri', { 'default_value' => [''] } )
-    $ldap_url    = $ldap_urls[0]
+    $ldap_url    = $ldap_urls[-1]
     $ldap_server = inline_template(
       '<%= @ldap_url.match(/(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]]\.)+(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]])\.?/) %>'
       )

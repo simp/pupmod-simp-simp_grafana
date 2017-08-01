@@ -20,7 +20,7 @@ describe 'simp_grafana' do
       context 'without any parameters' do
         let(:params) { {} }
         it_behaves_like 'a structured module'
-        it { is_expected.to contain_class('simp_grafana').with_trusted_nets(['127.0.0.0/8']) }
+        it { is_expected.to contain_class('simp_grafana').with_trusted_nets(['127.0.0.1/8']) }
         it { is_expected.not_to contain_class('simp_grafana::config::firewall') }
         it { is_expected.not_to create_iptables__add_tcp_stateful_listen('allow_simp_grafana_tcp_connections').with_dports('8443') }
         it 'grants revoke_grafana_cap to grafana-server' do

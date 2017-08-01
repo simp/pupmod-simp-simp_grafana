@@ -10,6 +10,9 @@
   "tags": [
     "simp"
   ],
+
+  "data_provider": "hiera",
+
   "dependencies": [
     {
       "name": "puppet/grafana",

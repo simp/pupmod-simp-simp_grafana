@@ -1,0 +1,24 @@
+---
+lookup_options:
+  simp_grafana::_cfg:
+    merge:
+      strategy: deep
+
+simp_grafana::cfg:
+  server:
+    http_port: 8443
+    protocol: 'https'
+  security:
+    disable_gravatar: true
+  users:
+    allow_sign_up: false
+    allow_org_create: true
+    auto_assign_org: true
+  'auth.basic':
+    enabled: false
+  'dashboards.json':
+    enabled: true
+  analytics:
+    reporting_enabled: false
+  snapshot:
+    external_enabled: false
