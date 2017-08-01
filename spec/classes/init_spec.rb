@@ -5,7 +5,6 @@ describe 'simp_grafana' do
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to create_class('simp_grafana') }
     it { is_expected.to contain_class('simp_grafana') }
-    it { is_expected.to contain_class('simp_grafana::params') }
   end
 
   on_supported_os.each do |os, facts|
