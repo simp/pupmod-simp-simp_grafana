@@ -143,7 +143,7 @@ class simp_grafana (
   String                        $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509',
   String                        $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem",
   String                        $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub",
- ) inherits ::simp_grafana::params {
+ ) {
 
   #assert_metadata_os()
 
