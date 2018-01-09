@@ -18,7 +18,9 @@ simp_options::trusted_nets:
 
 # LDAP settings
 simp_options::ldap::base_dn         : "dc=test"
+simp_openldap::base_dn              : "dc=test"
 simp_options::ldap::bind_dn         : "cn=hostAuth,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
+simp_openldap::bind_dn              : "cn=hostAuth,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
 simp_options::ldap::bind_pw         : "123$%^qweRTY"
 simp_options::ldap::bind_hash       : "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
 simp_options::ldap::sync_dn         : "cn=LDAPSync,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"

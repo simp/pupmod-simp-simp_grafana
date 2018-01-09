@@ -1,3 +1,8 @@
+* Wed Oct 03 2018 Brandon Riden <brandon.riden@onyxpoint.com> - 1.1.0-0
+- Updated acceptance test to remove unnecessary proxy check and set correct syntax
+  for ldap => true
+- Uncommented static defaults in init.pp
+
 * Wed Oct 03 2018 Scott Armiger <scott.armiger@onyxpoint.com> - 1.1.0-0
 - Fixed a bug in params.pp where it was attempting to configure ldap variables
   even when $ldap was set to false.

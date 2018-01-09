@@ -217,7 +217,8 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          ldap => true,
+          cfg  => { 'auth.basic' => { enabled => true } },
         }
 
         # Allow SSH from the standard Vagrant nets

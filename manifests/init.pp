@@ -143,33 +143,33 @@ class simp_grafana (
   String                        $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509',
   String                        $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem",
   String                        $app_pki_cert            = "${app_pki_dir}/public/${facts['fqdn']}.pub",
- ) {
+) {
 
   #assert_metadata_os()
 
   # Static defaults
   $_cfg = {
     server       => {
-      # http_port => 8443,
-      # protocol  => 'https',
+      http_port => 8443,
+      protocol  => 'https',
       cert_file => $app_pki_cert,
       cert_key  => $app_pki_key,
     },
     security     => {
       admin_password   => $admin_pw,
-      # disable_gravatar => true,
+      disable_gravatar => true,
     },
-    # users        => {
-    #   allow_sign_up    => false,
-    #   allow_org_create => true,
-    #   auto_assign_org  => true,
-    # },
-    # 'auth.basic' => { enabled => false },
+    users        => {
+      allow_sign_up    => false,
+      allow_org_create => true,
+      auto_assign_org  => true,
+    },
+    'auth.basic' => { enabled => false },
     'auth.ldap'  => { enabled => $ldap },
     #Allows SIMP dashboards to be read from the file system
-    # 'dashboards.json' => { enabled => true },
-    # analytics   => { reporting_enabled => false },
-    # snapshot    => { external_enabled => false },
+    'dashboards.json' => { enabled => true },
+    analytics   => { reporting_enabled => false },
+    snapshot    => { external_enabled => false },
   }
 
   if ($ldap) {
@@ -189,7 +189,7 @@ class simp_grafana (
     $ldap_url    = $ldap_urls[-1]
     $ldap_server = inline_template(
       '<%= @ldap_url.match(/(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]]\.)+(([[:alnum:]][[:alnum:]-]{0,254})?[[:alnum:]])\.?/) %>'
-      )
+    )
     $ldap_server_defaults = {
       host                  => $ldap_server,
       port                  => 636,
