@@ -213,7 +213,33 @@ describe 'the grafana server' do
     it_behaves_like 'an LDAP-enabled server'
   end
 
-  context 'with LDAP enabled in the manifest' do
+  context 'with LDAP enabled in the manifest (auth.ldap variable)' do
+    let(:manifest) do
+      <<-EOS
+        class { 'simp_grafana':
+          cfg  => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+        }
+
+        # Allow SSH from the standard Vagrant nets
+        iptables::listen::tcp_stateful { 'allow_ssh':
+          trusted_nets => hiera('simp_options::trusted_nets'),
+          dports       => 22,
+        }
+      EOS
+    end
+
+    it 'applies without errors' do
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
+    end
+
+    it 'is idempotent' do
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
+    end
+
+    it_behaves_like 'an LDAP-enabled server'
+  end
+
+  context 'with LDAP enabled in the manifest (ldap variable)' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':

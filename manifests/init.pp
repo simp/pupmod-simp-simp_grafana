@@ -172,7 +172,7 @@ class simp_grafana (
     snapshot    => { external_enabled => false },
   }
 
-  if ($ldap) {
+  if ($ldap) or ($cfg['auth.ldap'] == { enabled => true }) {
 
     $ldap_group_mapping_defaults = [
       { group_dn => 'simp_grafana_admins',     org_role => 'Admin'  },
