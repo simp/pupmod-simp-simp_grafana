@@ -66,6 +66,7 @@ describe 'the grafana server' do
       # pupmod-simp-iptables with SELinux
       apply_manifest_on(grafana, manifest, :catch_failures => true)
       apply_manifest_on(grafana, manifest, :catch_failures => true)
+      on(grafana, 'rpm -q grafana')
     end
 
     it 'is idempotent' do
@@ -107,7 +108,8 @@ describe 'the grafana server' do
 
     describe iptables do
       it "allows traffic from `trusted_nets` to port #{grafana_port}" do
-        is_expected.to have_rule("-s 127.0.0.0/8 -p tcp -m state --state NEW -m tcp -m multiport --dports #{grafana_port} -j ACCEPT").
+        on(grafana,'iptables -S LOCAL-INPUT')
+        is_expected.to have_rule("-s 127.0.0.0/8 -p tcp -m state --state NEW -m tcp -m multiport --dports #{grafana_port} -m comment --comment \"SIMP:\" -j ACCEPT").
           with_chain('LOCAL-INPUT')
       end
     end
@@ -336,6 +338,16 @@ describe 'the grafana server' do
           dports       => 22,
         }
 
+        # This datasource represents how we would typically
+        # connect to Elasticsearch. Per Grafana's recommendation
+        # we use the proxy access mode.
+        #
+        # FIXME:
+        # Beginning with Grafana 4.6.2, TLS server verification
+        # is turned on by default for communication with datasources.
+        # Until we can figure out how to configure the datasource with
+        # the appropriate cacert, we need to disable TLS server
+        # verification by setting tlsSkipVerify to true.
         grafana_datasource { 'elasticsearch':
           ensure            => present,
           grafana_url       => 'https://#{grafana_fqdn}:#{grafana_port}',
@@ -347,9 +359,10 @@ describe 'the grafana server' do
           database          => '[logstash-]YYYY.MM.DD',
           is_default        => true,
           json_data         => {
-            esVersion => 2,
-            timeField => '@timestamp',
-            interval  => 'Daily',
+            esVersion     => 5,
+            timeField     => '@timestamp',
+            interval      => 'Daily',
+            tlsSkipVerify => true,
           },
           require => Class['::grafana::service'],
         }
@@ -364,7 +377,9 @@ describe 'the grafana server' do
       apply_manifest_on grafana, manifest, :catch_changes => true
     end
 
-    it 'acts as a proxy to Elasticsearch' do
+    it 'communicates with Elasticsearch' do
+      # If the following proxy command to Elasticsearch doesn't work,
+      # we are NOT properly configured to pull data from Elasticsearch!
       es_test_args = curl_rest_args
       es_test_args << "https://admin:admin@#{grafana_fqdn}:#{grafana_port}/api/datasources/proxy/1/logstash-#{Time.now.utc.strftime('%Y.%m.%d')}/_stats"
       curl_output = curl_on(grafana, es_test_args).stdout
