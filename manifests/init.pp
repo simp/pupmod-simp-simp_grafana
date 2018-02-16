@@ -1,8 +1,8 @@
 ## Class: simp_grafana
 #
 # This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved
-# Grafana module written and maintained by Bill Fraser.  It sets a baseline of
-# secure defaults and integrates Grafana with other SIMP components.
+# Grafana module written by Bill Fraser and maintained by Vox Pupuli.  It sets
+# baseline of secure defaults and integrates Grafana with other SIMP components.
 #
 # @note If SIMP integration is not required, direct use of the component Grafana
 #   module is advised.
