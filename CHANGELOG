@@ -1,3 +1,6 @@
+* Fri Feb 16 2018 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.5-0
+- Update upper range of puppet/grafana module dependency to < 5.0.0
+
 * Wed Jul 12 2017 Liz Nemsick <liz.nemsick-simp@gmail.com> - 1.0.4-0
 - Workaround 2-pass grafana rpm install issue in acceptance tests
 - Update README to reflect SIMP 6 global catalysts.

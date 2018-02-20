@@ -1,83 +1,48 @@
 ---
 fixtures:
   repositories:
-    auditd:
-      repo: https://github.com/simp/pupmod-simp-auditd
-      ref: 7.0.1
-    augeasproviders_core:
-      repo: https://github.com/simp/augeasproviders_core
-      ref: simp6.0.0-2.1.3
-    augeasproviders_grub:
-      repo: https://github.com/simp/augeasproviders_grub
-      ref: simp6.0.0-2.4.0
+    auditd: https://github.com/simp/pupmod-simp-auditd
+    augeasproviders_core: https://github.com/simp/augeasproviders_core
+    augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     concat:
+      # master is beyond 4.1.1, but has breaking changes to
+      # how fragments are ordered (MODULES-6625)
       repo: https://github.com/simp/puppetlabs-concat
-      ref: simp6.0.0-2.2.0
+      ref: 4.1.1
     datacat:
       repo: https://github.com/simp/puppet-datacat
       ref: simp6.0.0-0.6.2
     elasticsearch:
       repo: https://github.com/simp/puppet-elasticsearch
-      ref: 5.2.0
+      ref: 5.5.0
     file_concat:
       repo: https://github.com/simp/puppet-lib-file_concat
-      ref: simp6.0.0-1.0.1
+      ref: simp-1.0.1
     grafana:
       repo: https://github.com/simp/puppet-grafana
-      ref: v3.0.0
-    haveged:
-      repo: https://github.com/simp/puppet-haveged
-      ref: 0.4.0
-    iptables:
-      repo: https://github.com/simp/pupmod-simp-iptables
-      ref: 6.0.1
+      # v4.1.0 has a bug in grafana_datasource that causes
+      # one of the acceptance test manifests to not be idempotent
+      # (failing the test!).
+      ref: v4.0.3
+    haveged: https://github.com/simp/pupmod-simp-haveged
+    iptables: https://github.com/simp/pupmod-simp-iptables
     java:
       repo: https://github.com/simp/puppetlabs-java
-      ref: simp-1.6.0-post1
-    logrotate:
-      repo: https://github.com/simp/pupmod-simp-logrotate
-      ref: 6.0.0
-    oddjob:
-      repo: https://github.com/simp/pupmod-simp-oddjob
-      ref: 2.0.0
-    pam:
-      repo: https://github.com/simp/pupmod-simp-pam
-      ref: 6.0.2
-    pki:
-      repo: https://github.com/simp/pupmod-simp-pki
-      ref: 6.0.0
-    rsync:
-      repo: https://github.com/simp/pupmod-simp-rsync
-      ref: 6.0.2
-    rsyslog:
-      repo: https://github.com/simp/pupmod-simp-rsyslog
-      ref: 7.0.2
-    simp:
-      repo: https://github.com/simp/pupmod-simp-simp
-      ref: 4.0.0
-    simp_apache:
-      repo: https://github.com/simp/pupmod-simp-apache
-      ref: 6.0.0
-    simp_elasticsearch:
-      repo: https://github.com/simp/pupmod-simp-simp_elasticsearch
-      branch: master
-    simp_openldap:
-      repo: https://github.com/simp/pupmod-simp-simp_openldap
-      ref: 6.0.2
-    simpcat:
-      repo: https://github.com/simp/pupmod-simp-concat
-      ref: 6.0.0
-    simplib:
-      repo: https://github.com/simp/pupmod-simp-simplib
-      ref: 3.2.0
-    stdlib:
-      repo: https://github.com/simp/puppetlabs-stdlib
-      ref: simp6.0.0-4.13.1
-    stunnel:
-      repo: https://github.com/simp/pupmod-simp-stunnel
-      ref: 6.0.1
-    tcpwrappers:
-      repo: https://github.com/simp/pupmod-simp-tcpwrappers
-      ref: 6.0.0
+      ref: 2.4.0
+    logrotate: https://github.com/simp/pupmod-simp-logrotate
+    oddjob: https://github.com/simp/pupmod-simp-oddjob
+    pam: https://github.com/simp/pupmod-simp-pam
+    pki: https://github.com/simp/pupmod-simp-pki
+    rsync: https://github.com/simp/pupmod-simp-rsync
+    rsyslog: https://github.com/simp/pupmod-simp-rsyslog
+    simp: https://github.com/simp/pupmod-simp-simp
+    simp_apache: https://github.com/simp/pupmod-simp-apache
+    simp_elasticsearch: https://github.com/simp/pupmod-simp-simp_elasticsearch
+    simp_openldap: https://github.com/simp/pupmod-simp-simp_openldap
+    simpcat: https://github.com/simp/pupmod-simp-concat
+    simplib: https://github.com/simp/pupmod-simp-simplib
+    stdlib: https://github.com/simp/puppetlabs-stdlib
+    stunnel: https://github.com/simp/pupmod-simp-stunnel
+    tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers
   symlinks:
     simp_grafana: "#{source_dir}"

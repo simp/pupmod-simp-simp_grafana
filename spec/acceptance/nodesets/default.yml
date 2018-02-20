@@ -33,7 +33,6 @@ HOSTS:
         gpgkeys:
           - https://packagecloud.io/gpg.key
           - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
-          - https://raw.githubusercontent.com/simp/simp-core/master/src/assets/simp-gpgkeys/GPGKEYS/RPM-GPG-KEY-grafana-legacy
       epel:
         mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
