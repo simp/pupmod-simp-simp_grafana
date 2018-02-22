@@ -15,15 +15,9 @@ fixtures:
     elasticsearch:
       repo: https://github.com/simp/puppet-elasticsearch
       ref: 5.5.0
-    file_concat:
-      repo: https://github.com/simp/puppet-lib-file_concat
-      ref: simp-1.0.1
     grafana:
       repo: https://github.com/simp/puppet-grafana
-      # v4.1.0 has a bug in grafana_datasource that causes
-      # one of the acceptance test manifests to not be idempotent
-      # (failing the test!).
-      ref: v4.0.3
+      ref: v4.1.1
     haveged: https://github.com/simp/pupmod-simp-haveged
     iptables: https://github.com/simp/pupmod-simp-iptables
     java:
