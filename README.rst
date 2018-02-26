@@ -122,10 +122,11 @@ and "simp_grafana_viewers."
 
 .. warning::
     If `$ldap` is set to true, the ``toml`` gem needs to be installed into the
-    puppetserver gemset. Starting with SIMP 6.2, we bundle an rpm called
-    ``rubygem-puppetserver-toml`` that can be installed on the puppetserver host
-    that installs the toml gem. This RPM can be found in the 6_X_Dependencies
-    yumrepo available on `PackageCloud https://packagecloud.io/simp-project/6_X_Dependencies`_.
+    puppetserver gemset. Starting with SIMP 6.2, SIMP provides an RPM, called
+    ``rubygem-puppetserver-toml``, that provides this gem and automatically
+    installs the gem and its dependencies (also packaged as RPMs) into the
+    puppsetserver. This RPM and its dependent RPMs can be found in the 6_X_Dependencies
+    yumrepo, available on `PackageCloud https://packagecloud.io/simp-project/6_X_Dependencies`_.
 
     ``yum install -y rubygem-puppetserver-toml``
 
