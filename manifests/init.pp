@@ -78,6 +78,12 @@
 # @param use_internet_repo If set, allow the ::grafana module to point
 #   to the appropriate package repository on the Internet automatically.
 #
+# @param version Version of grafana to install
+#
+# @param rpm_iteration
+#
+# @param simp_dashboards Install SIMP dashboards
+#
 ## Examples
 #
 # @example Resource-style class declaration

@@ -120,6 +120,14 @@ This will also set up default group mappings for groups with the CNs
 "simp_grafana_admins," "simp_grafana_editors," "simp_grafana_editors_ro,"
 and "simp_grafana_viewers."
 
+.. warning::
+    If `$ldap` is set to true, the ``toml`` gem needs to be installed into the
+    puppetserver gemset. Starting with SIMP 6.2, we bundle an rpm called
+    ``rubygem-puppetserver-toml`` that can be installed on the puppetserver host
+    that installs the toml gem.
+
+    ``yum install -y rubygem-puppetserver-toml``
+
 .. note::
     At present the module does not support config merging of servers in
     the ``ldap_cfg`` parameter, so if any changes are made to the default
