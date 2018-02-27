@@ -125,7 +125,7 @@ puppetserver gemset. An RPM called ``rubygem-puppetserver-toml`` is
 provided with SIMP 6.2 that automatically installs the gem and its
 dependencies into the puppetserver. This RPM and its dependent RPMs can be
 found in the 6_X_Dependencies yum repo, available on 
-`PackageCloud https://packagecloud.io/simp-project/6_X_Dependencies`_.
+`PackageCloud https://packagecloud.io/simp-project/6_X_Dependencies`__.
 Install this package using yum:
 
     ``yum install -y rubygem-puppetserver-toml``
