@@ -5,8 +5,7 @@
 #
 # @private
 #
-class simp_grafana::config::pki (
-) {
+class simp_grafana::config::pki {
   assert_private()
 
   ::pki::copy { 'grafana':
