@@ -25,10 +25,6 @@ describe 'the grafana server' do
     write_hieradata_to grafana, grafana_hieradata, grafana_fqdn
     write_hieradata_to grafana, "---\n", 'context'
 
-    hosts.each do |host|
-      on(host, 'ifup eth1')
-    end
-
     # This would normally be required on the Puppet compile masters.
     if grafana[:type] == 'aio'
       on(grafana, '/opt/puppetlabs/bin/puppet resource package toml ensure=present provider=puppet_gem')
@@ -56,10 +52,10 @@ describe 'the grafana server' do
     end
 
     it 'applies without errors' do
-      # this first apply will fail because the grafana RPM installation 
+      # this first apply will fail because the grafana RPM installation
       # (managed by the grafana module) requires 'yum install grafana -y'
       # to be called twice. The first time it complains that the grafana
-      # GPG key could not be found, but then succeeds the second time. 
+      # GPG key could not be found, but then succeeds the second time.
       apply_manifest_on(grafana, manifest, :accept_all_exit_codes => true)
 
       # We must do this twice before it becomes idempotent due to a bug in
