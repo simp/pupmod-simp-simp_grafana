@@ -1,42 +1,48 @@
 ---
 fixtures:
   repositories:
-    auditd: https://github.com/simp/pupmod-simp-auditd
-    augeasproviders_core: https://github.com/simp/augeasproviders_core
-    augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     concat:
       # master is beyond 4.1.1, but has breaking changes to
       # how fragments are ordered (MODULES-6625)
       repo: https://github.com/simp/puppetlabs-concat
       ref: 4.1.1
-    datacat:
-      repo: https://github.com/simp/puppet-datacat
-      ref: simp6.0.0-0.6.2
     elasticsearch:
       repo: https://github.com/simp/puppet-elasticsearch
       ref: 5.5.0
     grafana:
       repo: https://github.com/simp/puppet-grafana
       ref: v4.1.1
-    haveged: https://github.com/simp/pupmod-simp-haveged
     iptables: https://github.com/simp/pupmod-simp-iptables
     java:
       repo: https://github.com/simp/puppetlabs-java
       ref: 2.4.0
-    logrotate: https://github.com/simp/pupmod-simp-logrotate
-    oddjob: https://github.com/simp/pupmod-simp-oddjob
-    pam: https://github.com/simp/pupmod-simp-pam
     pki: https://github.com/simp/pupmod-simp-pki
+    simplib: https://github.com/simp/pupmod-simp-simplib
+    stdlib: https://github.com/simp/puppetlabs-stdlib
+
+    # Fixtures for the acceptance test
+    # auditd: https://github.com/simp/pupmod-simp-auditd
+    # augeasproviders_core: https://github.com/simp/augeasproviders_core
+    # augeasproviders_grub: https://github.com/simp/augeasproviders_grub
+    datacat:
+      repo: https://github.com/simp/puppet-datacat
+      ref: simp6.0.0-0.6.2
+    # haveged: https://github.com/simp/pupmod-simp-haveged
+    # logrotate: https://github.com/simp/pupmod-simp-logrotate
+    # oddjob: https://github.com/simp/pupmod-simp-oddjob
+    pam: https://github.com/simp/pupmod-simp-pam
     rsync: https://github.com/simp/pupmod-simp-rsync
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
     simp: https://github.com/simp/pupmod-simp-simp
     simp_apache: https://github.com/simp/pupmod-simp-apache
     simp_elasticsearch: https://github.com/simp/pupmod-simp-simp_elasticsearch
     simp_openldap: https://github.com/simp/pupmod-simp-simp_openldap
-    simpcat: https://github.com/simp/pupmod-simp-concat
-    simplib: https://github.com/simp/pupmod-simp-simplib
-    stdlib: https://github.com/simp/puppetlabs-stdlib
+    # simpcat: https://github.com/simp/pupmod-simp-concat
     stunnel: https://github.com/simp/pupmod-simp-stunnel
+    systemd:
+      repo: https://github.com/simp/puppet-systemd
+      branch: simp-master
     tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers
+
   symlinks:
     simp_grafana: "#{source_dir}"
