@@ -21,15 +21,9 @@ fixtures:
     stdlib: https://github.com/simp/puppetlabs-stdlib
 
     # Fixtures for the acceptance test
-    # auditd: https://github.com/simp/pupmod-simp-auditd
-    # augeasproviders_core: https://github.com/simp/augeasproviders_core
-    # augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     datacat:
       repo: https://github.com/simp/puppet-datacat
       ref: simp6.0.0-0.6.2
-    # haveged: https://github.com/simp/pupmod-simp-haveged
-    # logrotate: https://github.com/simp/pupmod-simp-logrotate
-    # oddjob: https://github.com/simp/pupmod-simp-oddjob
     pam: https://github.com/simp/pupmod-simp-pam
     rsync: https://github.com/simp/pupmod-simp-rsync
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
@@ -37,7 +31,6 @@ fixtures:
     simp_apache: https://github.com/simp/pupmod-simp-apache
     simp_elasticsearch: https://github.com/simp/pupmod-simp-simp_elasticsearch
     simp_openldap: https://github.com/simp/pupmod-simp-simp_openldap
-    # simpcat: https://github.com/simp/pupmod-simp-concat
     stunnel: https://github.com/simp/pupmod-simp-stunnel
     systemd:
       repo: https://github.com/simp/puppet-systemd
