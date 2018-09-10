@@ -2,6 +2,14 @@
 # Additional hieradata for the SIMP server.
 simp_options::tcpwrappers : true
 
+# Lower the security requirements for the Grafana GUI
+simp_openldap::server::conf::security:
+  - 'ssf=128'
+  - 'tls=128'
+  - 'update_ssf=128'
+  - 'simple_bind=128'
+  - 'update_tls=128'
+
 # Classes to include
 classes:
   - simp::server::rsync_shares
