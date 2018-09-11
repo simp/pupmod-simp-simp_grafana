@@ -126,7 +126,7 @@ Default value: simplib::lookup('simp_options::pki', { 'default_value' => false }
 
 ##### `app_pki_external_source`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `String`
 
 * If pki = 'simp' or true, this is the directory from which certs will be
   copied, via pki::copy.  Defaults to /etc/pki/simp/x509.
