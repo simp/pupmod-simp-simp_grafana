@@ -130,7 +130,7 @@ class simp_grafana (
   Simplib::Netlist              $trusted_nets            = $::simp_grafana::params::trusted_nets,
   Boolean                       $firewall                = $::simp_grafana::params::firewall,
   Variant[Boolean,Enum['simp']] $pki                     = simplib::lookup('simp_options::pki', { 'default_value' => false }),
-  Stdlib::Absolutepath          $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
+  String                        $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
   Hash                          $cfg                     = {},
   Hash                          $ldap_cfg                = {},
   String                        $install_method          = 'repo',
