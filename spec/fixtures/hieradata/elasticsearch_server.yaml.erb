@@ -1,19 +1,18 @@
----
 # Additional Hiera data for the fake Elasticsearch server
 
-simp_elasticsearch::cluster_name    : 'test_cluster'
-simp_elasticsearch::bind_host       : '<%= elasticsearch_server.reachable_name %>'
-simp_elasticsearch::unicast_hosts   :
+simp_elasticsearch::cluster_name: 'test_cluster'
+simp_elasticsearch::bind_host: '<%= elasticsearch_server.reachable_name %>'
+simp_elasticsearch::unicast_hosts:
   - '<%= elasticsearch_server.reachable_name %>:9300'
-simp_elasticsearch::http_method_acl :
+simp_elasticsearch::http_method_acl:
   'limits':
     'hosts':
-      '10.255.0.0/16' : ['GET', 'POST']
-      '10.0.2.0/24'   : ['GET', 'POST']
+      '10.255.0.0/16': ['GET', 'POST']
+      '10.0.2.0/24': ['GET', 'POST']
 simp_elasticsearch::apache::ssl_verify_client: 'none'
 simp_elasticsearch::simp_apache::ssl_verify_client: 'none'
 
 apache::rsync_web_root: false
 simp_apache::rsync_web_root: false
 
-simp_options::rsync::server : "%{::fqdn}"
+simp_options::rsync::server: "%{facts.fqdn}"

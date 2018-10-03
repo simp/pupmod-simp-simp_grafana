@@ -8,7 +8,7 @@
 class simp_grafana::config::firewall {
   assert_private()
 
-  include '::iptables'
+  include 'iptables'
 
   iptables::listen::tcp_stateful { 'allow_simp_grafana_tcp_connections':
     trusted_nets => $::simp_grafana::trusted_nets,

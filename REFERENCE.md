@@ -5,22 +5,19 @@
 
 **Classes**
 
-* [`simp_grafana`](#simp_grafana): Class: simp_grafana  This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved Grafana module written by Bill Fraser and m
+* [`simp_grafana`](#simp_grafana): This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved Grafana module written by Bill Fraser and maintained by Vox Pupu
 * [`simp_grafana::config::firewall`](#simp_grafanaconfigfirewall): Class simp_grafana::config::firewall  This class is meant to be called from simp_grafana. It ensures that firewall rules are defined.
 * [`simp_grafana::config::pki`](#simp_grafanaconfigpki): Class: simp_grafana::config::config::pki  This class is meant to be called from simp_grafana. It ensures that pki rules are defined.
-* [`simp_grafana::params`](#simp_grafanaparams): Class: simp_grafana::params  This class is meant to be called from simp_grafana. It sets variables according to platform.
 
 ## Classes
 
 ### simp_grafana
 
-Class: simp_grafana
-
 This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved
 Grafana module written by Bill Fraser and maintained by Vox Pupuli.  It sets
 baseline of secure defaults and integrates Grafana with other SIMP components.
 
-Welcome to SIMP!
+# Welcome to SIMP!
 
 This module is a component of the System Integrity Management Platform (SIMP),
 a managed security compliance framework built on Puppet.
@@ -34,10 +31,6 @@ it can be used independently:
 * If used independently, all SIMP-managed security subsystems may be disabled
   via the `firewall` and `pki` settings.
 
-Parameters
-
-Examples
-
 * **Note** If SIMP integration is not required, direct use of the component Grafana
 module is advised.
 
@@ -47,19 +40,16 @@ module is advised.
 
 ```puppet
 class { 'simp_grafana':
-  firewall => true,
-  pki      => true,
-  trusted_nets     => ['10.255.0.0/16'],
+  firewall        => true,
+  pki             => true,
+  trusted_nets    => ['10.255.0.0/16'],
   cfg             => { 'auth.ldap' => { enabled => true } },
   ldap_cfg        => {
     verbose_logging => true,
     servers         => [
       {
         host                  => 'ldap.example.com',
-        # @note: If using Puppet 3.x, the param `port` MUST use arithmetic.
-        #   If it does not, it will be converted into a string and the LDAP
-        #   configuration file will fail to load with a type error.
-        port                  => 635 + 1,
+        port                  => 636,
         use_ssl               => true,
         bind_dn               => 'uid=grafana,ou=Services,dc=test',
         bind_password         => '123$%^qweRTY',
@@ -75,7 +65,7 @@ class { 'simp_grafana':
           email     => 'mail',
         },
         group_mappings => [
-          { group_dn => '50000', org_role => 'Admin'  },
+          { group_dn => 'admin', org_role => 'Admin'  },
           { group_dn => '50001', org_role => 'Editor' },
         ],
       },
@@ -95,7 +85,7 @@ Data type: `Simplib::Netlist`
 A whitelist of subnets
 (in CIDR notation) permitted access.
 
-Default value: $::simp_grafana::params::trusted_nets
+Default value: simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1/8'] })
 
 ##### `firewall`
 
@@ -104,7 +94,52 @@ Data type: `Boolean`
 If true, manage firewall rules to
 accommodate simp_grafana.
 
-Default value: $::simp_grafana::params::firewall
+Default value: simplib::lookup('simp_options::firewall', { 'default_value' => false })
+
+##### `ldap`
+
+Data type: `Boolean`
+
+If true, enable ldap authentication using $ldap_cfg
+The following settings are set in puppet and are parameters of this class:
+* $ldap_urls
+* $base_dn
+* $bind_dn
+* $bind_pw
+
+Default value: simplib::lookup('simp_options::ldap', { 'default_value' => false })
+
+##### `ldap_urls`
+
+Data type: `Array[Simplib::URI,1]`
+
+LDAP server urls
+
+Default value: simplib::lookup('simp_options::ldap::uri', { 'default_value' => undef } )
+
+##### `base_dn`
+
+Data type: `String`
+
+Base DN of the LDAP server
+
+Default value: simplib::lookup('simp_options::ldap::base_dn', { 'default_value' => simplib::ldap::domain_to_dn("example.com") } )
+
+##### `bind_dn`
+
+Data type: `String`
+
+Bind DN of the LDAP server
+
+Default value: simplib::lookup('simp_options::ldap::bind_dn', { 'default_value' => "uid=%s,${base_dn}" } )
+
+##### `bind_pw`
+
+Data type: `String`
+
+Bind passworf for the bind_dn
+
+Default value: simplib::lookup('simp_options::ldap::bind_pw', { 'default_value' => undef } )
 
 ##### `pki`
 
@@ -137,41 +172,63 @@ Default value: simplib::lookup('simp_options::pki::source', { 'default_value' =>
 
 ##### `app_pki_dir`
 
-NOTE: Controlled in params.pp
+Data type: `String`
+
 This variable controls the basepath of $app_pki_key, $app_pki_cert,
 $app_pki_ca, $app_pki_ca_dir, and $app_pki_crl.
-It defaults to /etc/pki/simp_apps/grafana/x509.
 
 ##### `app_pki_key`
 
-NOTE: Controlled in params.pp
+Data type: `String`
+
 Path and name of the private SSL key file
+
+Default value: "${app_pki_dir}/private/${facts['fqdn']}.pem"
 
 ##### `app_pki_cert`
 
-NOTE: Controlled in params.pp
+Data type: `String`
+
 Path and name of the public SSL certificate
+
+Default value: "${app_pki_dir}/public/${facts['fqdn']}.pub"
+
+##### `default_cfg`
+
+Data type: `Hash`
+
+Default values for grafana
 
 ##### `cfg`
 
 Data type: `Hash`
 
 A passthrough to the Grafana component module, this will be
-merged with the SIMP defaults in `::simp_grafana::params`.
-
-Default value: {}
+merged with the SIMP defaults in `default_cfg`.
 
 ##### `ldap_cfg`
 
 Data type: `Hash`
 
-A passthrough to the Grafana component module.
-merged with the SIMP defaults in `::simp_grafana::params`.
-@note If using Puppet 3.x, Integer values in this Hash must be declared with
-  arithmetic expression to avoid converison to a String.  For example, to
-  set a value to `1`, the value should be declared as `0 + 1`.
+Grafana ldap configuration. If this is set, make sure to
+set all the params needed. There will be no merging.
 
-Default value: {}
+@see http://docs.grafana.org/installation/ldap/
+
+##### `simp_ldap_conf`
+
+Data type: `Hash`
+
+Defaults for the SIMP LDAP server, using data in
+modules.
+
+##### `admin_pw`
+
+Data type: `String`
+
+Grafana's default admin password
+
+Default value: simplib::passgen('simp_grafana')
 
 ##### `install_method`
 
@@ -181,16 +238,12 @@ A passthrough to the Grafana module, this sets
 the installation method of Grafana to a repository by default since this is
 the SIMP preferred method for installing packages.
 
-Default value: 'repo'
-
 ##### `use_internet_repo`
 
 Data type: `Boolean`
 
-If set, allow the ::grafana module to point
+If set, allow the `grafana` module to point
 to the appropriate package repository on the Internet automatically.
-
-Default value: `false`
 
 ##### `version`
 
@@ -204,17 +257,13 @@ Default value: simplib::lookup('simp_options::package_ensure', { 'default_value'
 
 Data type: `String`
 
-
-
-Default value: '1'
+Passed directly to the `grafana` class
 
 ##### `simp_dashboards`
 
 Data type: `Boolean`
 
 Install SIMP dashboards
-
-Default value: `false`
 
 ### simp_grafana::config::firewall
 
@@ -229,11 +278,4 @@ Class: simp_grafana::config::config::pki
 
 This class is meant to be called from simp_grafana.
 It ensures that pki rules are defined.
-
-### simp_grafana::params
-
-Class: simp_grafana::params
-
-This class is meant to be called from simp_grafana.
-It sets variables according to platform.
 

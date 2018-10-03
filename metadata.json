@@ -10,9 +10,6 @@
   "tags": [
     "simp"
   ],
-
-  "data_provider": "hiera",
-
   "dependencies": [
     {
       "name": "puppet/grafana",
@@ -65,7 +62,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 6.0.0"
+      "version_requirement": ">= 4.10.4 < 6.0.0"
     }
   ]
 }

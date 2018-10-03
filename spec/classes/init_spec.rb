@@ -12,12 +12,11 @@ describe 'simp_grafana' do
       let(:facts) do
         facts.merge({
           :auditd_version => '2.4.3',
-          :custom_hiera => 'actual_spec_tests',
+          :custom_hiera   => 'actual_spec_tests',
         })
       end
 
-      context 'without any parameters' do
-        let(:params) { {} }
+      context 'with minimal parameters' do
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana').with_trusted_nets(['127.0.0.1/8']) }
         it { is_expected.not_to contain_class('simp_grafana::config::firewall') }
@@ -36,7 +35,9 @@ describe 'simp_grafana' do
       end
 
       context 'when firewall management is enabled' do
-        let(:params) { { :firewall => true } }
+        let(:params) {{
+          :firewall => true
+        }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::firewall') }
         it { is_expected.to create_iptables__listen__tcp_stateful('allow_simp_grafana_tcp_connections').with_dports(8443) }
@@ -45,7 +46,7 @@ describe 'simp_grafana' do
       context 'when set to use a non-default port' do
         let(:params) {{
           :firewall => true,
-          :cfg => { 'server' => { 'http_port' => 3000 } },
+          :cfg      => { 'server' => { 'http_port' => 3000 }},
         }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::firewall') }
@@ -60,7 +61,9 @@ describe 'simp_grafana' do
       end
 
       context "when pki management is set to 'simp'" do
-        let(:params) { { :pki => 'simp' } }
+        let(:params) {{
+          :pki => 'simp'
+        }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::pki') }
         it { is_expected.to contain_pki__copy('grafana').with_source('/etc/pki/simp/x509') }
@@ -69,7 +72,9 @@ describe 'simp_grafana' do
       end
 
       context 'when PKI management is disabled' do
-        let(:params) { { :pki => true } }
+        let(:params) {{
+          :pki => true
+        }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_grafana::config::pki') }
         it { is_expected.to contain_pki__copy('grafana') }
@@ -79,30 +84,133 @@ describe 'simp_grafana' do
 
 
       context 'when ldap is false' do
-        let(:params) { {:ldap => false} }
+        let(:params) {{
+          :ldap => false
+        }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('grafana').with_ldap_cfg( {} ) }
       end
 
 
       context 'when ldap is true' do
-        let(:params) { {:ldap => true} }
-        it 'is expected to contain class grafana with ldap_cfg'
+        let(:params) {{
+          :ldap => true
+        }}
+        let(:hieradata) { 'actual_spec_tests' }
+        let(:data) {{
+          'verbose_logging' => true,
+          'servers'         => [
+            {
+              'port'                => 636,
+              'use_ssl'             => true,
+              'ssl_skip_verify'     => true,
+              'search_filter'       => '(uid=%s)',
+              'group_search_filter' => '(&(objectClass=posixGroup)(memberUid=%s))',
+              'attributes' => {
+                'name'      => 'givenName',
+                'surname'   => 'sn',
+                'username'  => 'uid',
+                'member_of' => 'cn',
+                'email'     => 'mail',
+              },
+              'group_mappings' => [
+                { 'group_dn' => 'simp_grafana_admins',     'org_role' => 'Admin' },
+                { 'group_dn' => 'simp_grafana_editors',    'org_role' => 'Editor' },
+                { 'group_dn' => 'simp_grafana_editors_ro', 'org_role' => 'Read Only Editor' },
+                { 'group_dn' => 'simp_grafana_viewers',    'org_role' => 'Viewer' }
+              ],
+              'host'                  => 'puppet',
+              'bind_dn'               => 'uid=%s,DC=example,DC=com',
+              'bind_password'         => '123$%^qweRTY',
+              'search_base_dns'       => ['ou=People,DC=example,DC=com'],
+              'group_search_base_dns' => ['ou=Group,DC=example,DC=com'],
+            }
+          ]
+        }}
+        it_behaves_like 'a structured module'
+        it { is_expected.to contain_class('grafana').with_ldap_cfg(data) }
       end
 
-    end
-  end
-
-  context 'on an unsupported operating system' do
-    describe 'without any parameters on Solaris/Nexenta' do
-      let(:facts) do
-        {
-          :osfamily        => 'Solaris',
-          :operatingsystem => 'Nexenta',
-        }
+      context 'with $ldap_cfg set' do
+        let(:params) {{
+          :ldap     => true,
+          :ldap_cfg => {
+            'verbose_logging' => true,
+            'servers'         => [
+              'bind_dn'               => 'uid=%s,DC=example,DC=com',
+              'bind_password'         => '123$%^qweRTY',
+              'group_search_base_dns' => ['ou=Group,DC=example,DC=com'],
+              'group_search_filter'   => '(&(objectClass=posixGroup)(memberUid=%s))',
+              'host'                  => 'puppet',
+              'search_base_dns'       => ['ou=People,DC=example,DC=com'],
+              'search_filter'       => '(uid=%s)',
+              'attributes'    => {
+                'name'      => 'givenName',
+                'surname'   => 'sn',
+                'username'  => 'uid',
+                'member_of' => 'cn',
+                'email'     => 'mail',
+              }
+            ]
+          }
+        }}
+        let(:hieradata) { 'actual_spec_tests' }
+        let(:data) {{
+          'verbose_logging' => true,
+          'servers'         => [
+            {
+              'bind_dn'               => 'uid=%s,DC=example,DC=com',
+              'bind_password'         => '123$%^qweRTY',
+              'group_search_base_dns' => ['ou=Group,DC=example,DC=com'],
+              'group_search_filter' => '(&(objectClass=posixGroup)(memberUid=%s))',
+              'host'                  => 'puppet',
+              'search_base_dns'       => ['ou=People,DC=example,DC=com'],
+              'search_filter'       => '(uid=%s)',
+              'attributes'  => {
+                'name'      => 'givenName',
+                'surname'   => 'sn',
+                'username'  => 'uid',
+                'member_of' => 'cn',
+                'email'     => 'mail',
+              },
+            }
+          ]
+        }}
+        it_behaves_like 'a structured module'
+        it { is_expected.to contain_class('grafana').with_ldap_cfg(data) }
       end
 
-      it { expect { is_expected.to contain_package('simp_grafana') }.to raise_error(Puppet::Error, /Nexenta not supported/) }
+      context 'when $cfg is set' do
+        let(:params) {{
+          :cfg => { 'security' => { 'admin_password' => 'stubbed' } }
+        }}
+        let(:hieradata) { 'actual_spec_tests' }
+        let(:data) {{
+          'auth.ldap'       => { 'enabled' => false },
+          'security'        => {
+            'admin_password'   => 'stubbed',
+            'disable_gravatar' => true
+          },
+          'server'          => {
+            'cert_file' => '/etc/pki/simp_apps/grafana/x509/public/foo.example.com.pub',
+            'cert_key'  => '/etc/pki/simp_apps/grafana/x509/private/foo.example.com.pem',
+            'http_port' => 8443,
+            'protocol'  => 'https'
+          },
+          'analytics'       => { 'reporting_enabled' => false },
+          'auth.basic'      => { 'enabled' => false },
+          'dashboards.json' => { 'enabled' => true },
+          'snapshot'        => { 'external_enabled' => false },
+          'users'           => {
+            'allow_org_create' => true,
+            'allow_sign_up'    => false,
+            'auto_assign_org'  => true
+          },
+        }}
+        it_behaves_like 'a structured module'
+        it { is_expected.to contain_class('grafana').with_cfg(data) }
+      end
+
     end
   end
 end

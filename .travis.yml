@@ -27,7 +27,7 @@ before_install:
 jobs:
   include:
     - stage: check
-      rvm: 2.4.1
+      rvm: 2.4.4
       env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5"
       script:
         - bundle exec rake check:dot_underscore
@@ -40,7 +40,7 @@ jobs:
         - bundle exec puppet module build
 
     - stage: spec
-      rvm: 2.4.1
+      rvm: 2.4.4
       env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
       script:
         - bundle exec rake spec
@@ -51,20 +51,8 @@ jobs:
       script:
         - bundle exec rake spec
 
-    - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.9.2"
-      script:
-        - bundle exec rake spec
-
-    - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.7.0"
-      script:
-        - bundle exec rake spec
-
     - stage: deploy
-      rvm: 2.4.1
+      rvm: 2.4.4
       script:
         - true
       before_deploy:
@@ -84,5 +72,5 @@ jobs:
             secure: "EYG7mnyOyXml1WfB6dnPtrh33JpwVkG18oIorC1oIVlDaG0lNg0EW1yzyfG9xMiSnVjBfU8OwtLUYdW7YEp0y579cNDbHLyNjZX7JoYR+UbqGdQoNKOj3AGPMXCLsVbhTHtoROX72IuXAcfZKqjCTmjeCsf4BVBajUnV1M/G7958xfo5aoungPp36Y74tLAB+SM/+ylT3kWkbMFSesQpDqMH5+hNgi5GVJBWdgl9ItNNk1mGak+FGGbvKxVSk6rdFgKu8pCB+ovjdZYXX2N8xCzAbirpUjSb4TPompTnnoBk5NNHwZrqFMssHyjSFJY4hJb9KO0hCo/OECfnU80eeaSWFZj1NjGbECp2wEkQzZAfzelUNdHZojDPshouYgLmIDS2w95UpffWr7QPDqMksrOrDP/7OtAhyvMt/2BR2Y9jJIwZnixGTRNEMYLNvcREvJYwwS6hODgfXL0HHLpw15uL76Jreg1vgRoBRS09oo1hkNMObtMVTt+sLH6ZNwKaq2AO+lmcUq30+2LcOJ3N3WOogQoFlPGeA5BGmLRIIpaGUrWnyZ/yLhPO5JjQyY4L4c3lTFNPjjv5V1/LMM1TOCGh+i73pMPWnp1Z3Gie6PXJsJoQTm9GsJKr1xuDiQgdvvaVolIDuOfDyyqri/osfBnioAXyro8ZEXNzJHHXHCU="
           on:
             tags: true
-            rvm: 2.4.1
+            rvm: 2.4.4
             condition: '($SKIP_FORGE_PUBLISH != true)'

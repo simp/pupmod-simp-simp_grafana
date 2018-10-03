@@ -3,22 +3,59 @@ lookup_options:
   simp_grafana::cfg:
     merge:
       strategy: deep
+  simp_grafana::ldap_cfg:
+    merge:
+      strategy: deep
+  simp_grafana::simp_ldap_conf:
+    merge:
+      strategy: deep
 
-simp_grafana::cfg:
-  server:
-    http_port: 8443
-    protocol: 'https'
-  security:
-    disable_gravatar: true
-  users:
-    allow_sign_up: false
-    allow_org_create: true
-    auto_assign_org: true
+simp_grafana::app_pki_dir: /etc/pki/simp_apps/grafana/x509
+simp_grafana::install_method: repo
+simp_grafana::rpm_iteration: '1'
+simp_grafana::simp_dashboards: false
+simp_grafana::use_internet_repo: false
+
+simp_grafana::simp_ldap_conf:
+  attributes:
+    name: givenName
+    surname: sn
+    username: uid
+    member_of: cn
+    email: mail
+  group_mappings:
+    - group_dn: simp_grafana_admins
+      org_role: Admin
+    - group_dn: simp_grafana_editors
+      org_role: Editor
+    - group_dn: simp_grafana_editors_ro
+      org_role: Read Only Editor
+    - group_dn: simp_grafana_viewers
+      org_role: Viewer
+  group_search_filter: '(&(objectClass=posixGroup)(memberUid=%s))'
+  port: 636
+  search_filter: '(uid=%s)'
+  ssl_skip_verify: true
+  use_ssl: true
+
+simp_grafana::default_cfg:
+  analytics:
+    reporting_enabled: false
   'auth.basic':
     enabled: false
   'dashboards.json':
     enabled: true
-  analytics:
-    reporting_enabled: false
+  security:
+    disable_gravatar: true
+  server:
+    http_port: 8443
+    protocol: https
   snapshot:
     external_enabled: false
+  users:
+    allow_org_create: true
+    allow_sign_up: false
+    auto_assign_org: true
+
+simp_grafana::cfg: {}
+simp_grafana::ldap_cfg: {}
