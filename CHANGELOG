@@ -3,8 +3,7 @@
 - Convert README to markdown and add a REFERENCE.md
 - Removed params.pp in favor of data in modules
 - Hashes in Puppet language should have keys that are quoted strings
-- Updated acceptance test to remove unnecessary proxy check and set correct syntax
-  for ldap => true
+- Updated acceptance test
 - Uncommented static defaults in init.pp
 
 * Wed Oct 03 2018 Scott Armiger <scott.armiger@onyxpoint.com> - 1.1.0-0
