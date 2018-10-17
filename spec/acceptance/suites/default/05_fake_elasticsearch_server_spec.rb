@@ -26,15 +26,15 @@ describe 'The fake Elasticsearch server' do
   it 'installs without errors' do
     # We must do this twice before it becomes idempotent due to a bug in
     # pupmod-simp-iptables with SELinux
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_failures => true
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_failures => true
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_failures => true)
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_failures => true)
   end
 
   it 'executes Puppet idempotently' do
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_changes => true
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_changes => true)
   end
 
   it 'populates with fake data' do
-    curl_on elasticsearch_server, curl_args
+    curl_on(elasticsearch_server, curl_args)
   end
 end

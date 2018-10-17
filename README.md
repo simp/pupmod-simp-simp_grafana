@@ -139,12 +139,6 @@ yum install -y rubygem-puppetserver-toml`
 `ldap_cfg` parameter, so if any changes are made to the default server,
 the entire server must be configured.
 
-> Due to the way Puppet 3.x handles data types, Integers in the `ldap_cfg`
-hash MUST be specified with arithmetic expression or else they will be
-converted to Strings when passed to the Ruby code that generates the
-LDAP configuration file. For example, to specify the port 8636, use the
-value "8635 + 1" without quotes.
-
 
 Network-isolated Setup
 ----------------------
