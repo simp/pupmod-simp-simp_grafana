@@ -130,7 +130,7 @@
 #     },
 #   }
 #
-# @author Lucas Yamanishi <lucas.yamanishi@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-simp_grafana/graphs/contributors
 #
 class simp_grafana (
   Hash                          $default_cfg,
