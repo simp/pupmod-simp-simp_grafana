@@ -8,7 +8,7 @@
 # @note If providing LDAP configuration via $ldap_cfg, SIMP's smart defaults
 #   will not be used. The defaults will also not be used if $ldap or
 #  `simp_options::ldap` is false. Make sure all needed options are set if
-#  specifying a custome $ldap_cfg.
+#  specifying a custom $ldap_cfg.
 #
 # # Welcome to SIMP!
 #

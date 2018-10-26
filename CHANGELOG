@@ -7,7 +7,22 @@ even when $ldap was set to false.
   - Convert README to markdown and add a REFERENCE.md
   - Hashes in Puppet language should have keys that are quoted strings
   - Updated acceptance test
-- New LDAP parameters
+  - Support puppetlabs/stdlib 6.0.0
+- New LDAP configuation method
+  - If providing LDAP configuration via $ldap_cfg, SIMP's smart defaults
+    will not be used. The defaults will also not be used if $ldap or
+    `simp_options::ldap` is false. Make sure all needed options are set if
+    specifying a custom $ldap_cfg.
+  - New parameters, to take advantage of data in modules
+    - $default_cfg
+    - $simp_ldap_conf
+    - $ldap
+    - $base_dn
+    - $bind_dn
+    - $bind_pw
+    - $ldap_urls
+    - $admin_pw
+    - $ldap_verbose_logging
 
 * Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.0.6-0
 - Updated $app_pki_external_source to accept any string. This matches the

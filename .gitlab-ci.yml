@@ -113,8 +113,8 @@ pup5_3-unit:
   <<: *setup_bundler_env
   <<: *spec_tests
 
-
-# Keep an eye on the latest puppet 5
+# Puppet 5.x for PE 2018.1 support
+# See: https://puppet.com/misc/puppet-enterprise-lifecycle
 # ----------------------------------
 pup5_latest-validation:
   stage: validation
@@ -138,6 +138,29 @@ pup5_latest-unit:
   <<: *setup_bundler_env
   <<: *spec_tests
 
+# # Keep an eye on the latest Puppet 6
+# # ----------------------------------
+# pup5_latest-validation:
+#   stage: validation
+#   tags:
+#     - docker
+#   image: ruby:2.4
+#   variables:
+#     PUPPET_VERSION: '~> 6.0'
+#   <<: *cache_bundler
+#   <<: *setup_bundler_env
+#   <<: *validation_checks
+#
+# pup5_latest-unit:
+#   stage: unit
+#   tags:
+#     - docker
+#   image: ruby:2.4
+#   variables:
+#     PUPPET_VERSION: '~> 6.0'
+#   <<: *cache_bundler
+#   <<: *setup_bundler_env
+#   <<: *spec_tests
 
 
 # Acceptance tests

@@ -18,7 +18,7 @@ Grafana module written by Bill Fraser and maintained by Vox Pupuli.  It sets
 baseline of secure defaults and integrates Grafana with other SIMP components.
 
  `simp_options::ldap` is false. Make sure all needed options are set if
- specifying a custome $ldap_cfg.
+ specifying a custom $ldap_cfg.
 
 # Welcome to SIMP!
 
