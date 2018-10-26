@@ -17,6 +17,9 @@ This module acts as a SIMP wrapper ("profile") for the Puppet, Inc. Approved
 Grafana module written by Bill Fraser and maintained by Vox Pupuli.  It sets
 baseline of secure defaults and integrates Grafana with other SIMP components.
 
+ `simp_options::ldap` is false. Make sure all needed options are set if
+ specifying a custome $ldap_cfg.
+
 # Welcome to SIMP!
 
 This module is a component of the System Integrity Management Platform (SIMP),
@@ -220,7 +223,14 @@ set all the params needed. There will be no merging.
 Data type: `Hash`
 
 Defaults for the SIMP LDAP server, using data in
-modules.
+modules. These settings can be checked by running
+`puppet lookup simp_grafana::simp_ldap_conf`.
+
+##### `ldap_verbose_logging`
+
+Data type: `Boolean`
+
+Enables verbose logging for the LDAP connections
 
 ##### `admin_pw`
 

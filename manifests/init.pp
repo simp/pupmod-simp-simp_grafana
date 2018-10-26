@@ -5,6 +5,11 @@
 # @note If SIMP integration is not required, direct use of the component Grafana
 #   module is advised.
 #
+# @note If providing LDAP configuration via $ldap_cfg, SIMP's smart defaults
+#   will not be used. The defaults will also not be used if $ldap or
+#  `simp_options::ldap` is false. Make sure all needed options are set if
+#  specifying a custome $ldap_cfg.
+#
 # # Welcome to SIMP!
 #
 # This module is a component of the System Integrity Management Platform (SIMP),
@@ -78,7 +83,10 @@
 #   @see http://docs.grafana.org/installation/ldap/
 #
 # @param simp_ldap_conf Defaults for the SIMP LDAP server, using data in
-#   modules.
+#   modules. These settings can be checked by running
+#   `puppet lookup simp_grafana::simp_ldap_conf`.
+#
+# @param ldap_verbose_logging Enables verbose logging for the LDAP connections
 #
 # @param admin_pw Grafana's default admin password
 #
@@ -142,6 +150,7 @@ class simp_grafana (
   Boolean                       $simp_dashboards,
   String                        $app_pki_dir,
   Hash                          $simp_ldap_conf,
+  Boolean                       $ldap_verbose_logging,
   String                        $admin_pw                = simplib::passgen('simp_grafana'),
   Simplib::Netlist              $trusted_nets            = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1/8'] }),
   Boolean                       $firewall                = simplib::lookup('simp_options::firewall', { 'default_value' => false }),
@@ -159,6 +168,7 @@ class simp_grafana (
 
   $_simp_ldap_server_name = split($ldap_urls[0], 'ldap://')[1]
   $_simp_ldap_server = $simp_ldap_conf + {
+    # add options that override or are not avilable in hiera
     'bind_dn'               => $bind_dn,
     'bind_password'         => $bind_pw,
     'group_search_base_dns' => ["ou=Group,${base_dn}"],
@@ -167,6 +177,7 @@ class simp_grafana (
   }
 
   $_cfg = deep_merge({
+    # add options that override or are not avilable in hiera
     'auth.ldap' => { 'enabled'        => $ldap },
     'security'  => { 'admin_password' => $admin_pw },
     'server'    => {
@@ -175,11 +186,11 @@ class simp_grafana (
     },
   }, $default_cfg)
 
-  # Only use simp's ldap server if all the catalysts are true, and
-  # there isn't any more ldap configuration
+  # Only use SIMP's ldap server conf if the catalyst is true, and
+  # there isn't any specified ldap configuration
   if empty($ldap_cfg) and ($ldap or ($cfg['auth.ldap'] == { 'enabled' => true })) {
     $_ldap_cfg = {
-      'verbose_logging' => true,
+      'verbose_logging' => $ldap_verbose_logging,
       'servers'         => [$_simp_ldap_server]
     }
   }

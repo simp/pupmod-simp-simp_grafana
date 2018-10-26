@@ -1,15 +1,13 @@
-* Wed Oct 03 2018 Brandon Riden <brandon.riden@onyxpoint.com> - 1.1.0-0
-- No longer support Puppet less than 4.10.4
-- Convert README to markdown and add a REFERENCE.md
-- Removed params.pp in favor of data in modules
-- Hashes in Puppet language should have keys that are quoted strings
-- Updated acceptance test
-- Uncommented static defaults in init.pp
-
 * Wed Oct 03 2018 Scott Armiger <scott.armiger@onyxpoint.com> - 1.1.0-0
 - Fixed a bug in params.pp where it was attempting to configure ldap variables
-  even when $ldap was set to false.
-- Updated to use data in modules when applicable
+even when $ldap was set to false.
+- Updated to use data in modules when applicable, and remove params.pp
+- No longer support Puppet less than 4.10.4
+- Minor changes
+  - Convert README to markdown and add a REFERENCE.md
+  - Hashes in Puppet language should have keys that are quoted strings
+  - Updated acceptance test
+- New LDAP parameters
 
 * Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.0.6-0
 - Updated $app_pki_external_source to accept any string. This matches the
