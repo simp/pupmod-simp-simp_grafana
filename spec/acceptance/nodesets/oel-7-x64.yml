@@ -11,17 +11,17 @@ HOSTS:
       - simp_server
       - server
       - master
-    platform: el-6-x86_64
-    box: centos/6
+    platform: el-7-x86_64
+    box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
     vagrant_memsize: 2048
     yum_repos:
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/0608B895.txt
+          - https://getfedora.org/static/352C64E5.txt
       simp-deps:
-        baseurl: https://packagecloud.io/simp-project/6_X_Dependencies/el/6/x86_64
+        baseurl: https://packagecloud.io/simp-project/6_X_Dependencies/el/7/x86_64
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
 
@@ -31,19 +31,19 @@ HOSTS:
       - agent
       - grafana
       - default
-    platform: el-6-x86_64
-    box: centos/6
+    platform: el-7-x86_64
+    box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       grafana:
-        url: https://packagecloud.io/grafana/stable/el/6/$basearch
+        url: https://packagecloud.io/grafana/stable/el/7/$basearch
         gpgkeys:
           - https://packagecloud.io/gpg.key
           - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/0608B895.txt
+          - https://getfedora.org/static/352C64E5.txt
       simp-deps:
         baseurl: https://packagecloud.io/simp-project/6_X_Dependencies/el/7/x86_64
         gpgkeys:
@@ -54,15 +54,15 @@ HOSTS:
       - simp_client
       - agent
       - elasticsearch_server
-    platform: el-6-x86_64
-    box: centos/6
+    platform: el-7-x86_64
+    box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
     vagrant_memsize: 1024
     yum_repos:
       epel:
-        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch&country=us
+        mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/0608B895.txt
+          - https://getfedora.org/static/352C64E5.txt
       elasticsearch:
         baseurl:  https://artifacts.elastic.co/packages/5.x/yum
         gpgkeys:

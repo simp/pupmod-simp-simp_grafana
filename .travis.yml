@@ -1,11 +1,18 @@
 # The testing matrix considers ruby/puppet versions supported by SIMP and PE:
+#
+# https://puppet.com/docs/pe/latest/overview/component_versions_in_recent_pe_releases.html
+# https://puppet.com/misc/puppet-enterprise-lifecycle
+# https://puppet.com/docs/pe/latest/overview/getting_support_for_pe.html
 # ------------------------------------------------------------------------------
-#  release    pup   ruby      eol
-# PE 2016.4   4.7   2.1.9  TBD (LTS)
-# PE 2016.5   4.8   2.1.9  2017-10-31
-# SIMP6.0.0   4.8   2.1.9  TBD
-# PE 2017.1   4.9   2.1.9  2017-10-31
-# PE 2017.2   4.10  2.1.9  TBD
+# Release       Puppet   Ruby   EOL
+# PE 2016.4.15  4.10.12  2.1.9  2018-12 (LTS)
+# SIMP 6.0      4.8.2    2.1.9  TBD
+# SIMP 6.1      4.10.6   2.1.9  TBD
+# SIMP 6.2      4.10.12  2.1.9  TBD
+# SIMP 6.3      5.5.7    2.4.4  TBD***
+# PE 2018.1     5.5.6    2.4.4  2020-05 (LTS)***
+#
+# *** = Modules created for SIMP 6.3+ are not required to support Puppet < 5.5
 ---
 language: ruby
 cache: bundler
@@ -23,12 +30,13 @@ addons:
 
 before_install:
   - rm -f Gemfile.lock
+  - gem update --system
 
 jobs:
   include:
     - stage: check
-      rvm: 2.4.1
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5"
+      rvm: 2.4.4
+      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
       script:
         - bundle exec rake check:dot_underscore
         - bundle exec rake check:test_file
@@ -40,31 +48,26 @@ jobs:
         - bundle exec puppet module build
 
     - stage: spec
-      rvm: 2.4.1
+      rvm: 2.4.4
+      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.5.6"
+      script:
+        - bundle exec rake spec
+
+    - stage: spec
+      rvm: 2.4.4
       env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.10.0"
-      script:
-        - bundle exec rake spec
-
-    - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.9.2"
-      script:
-        - bundle exec rake spec
-
-    - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.7.0"
+      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.10.4"
       script:
         - bundle exec rake spec
 
     - stage: deploy
-      rvm: 2.4.1
+      rvm: 2.4.4
+      if: 'fork = false AND tag = true'
       script:
         - true
       before_deploy:
@@ -84,5 +87,5 @@ jobs:
             secure: "EYG7mnyOyXml1WfB6dnPtrh33JpwVkG18oIorC1oIVlDaG0lNg0EW1yzyfG9xMiSnVjBfU8OwtLUYdW7YEp0y579cNDbHLyNjZX7JoYR+UbqGdQoNKOj3AGPMXCLsVbhTHtoROX72IuXAcfZKqjCTmjeCsf4BVBajUnV1M/G7958xfo5aoungPp36Y74tLAB+SM/+ylT3kWkbMFSesQpDqMH5+hNgi5GVJBWdgl9ItNNk1mGak+FGGbvKxVSk6rdFgKu8pCB+ovjdZYXX2N8xCzAbirpUjSb4TPompTnnoBk5NNHwZrqFMssHyjSFJY4hJb9KO0hCo/OECfnU80eeaSWFZj1NjGbECp2wEkQzZAfzelUNdHZojDPshouYgLmIDS2w95UpffWr7QPDqMksrOrDP/7OtAhyvMt/2BR2Y9jJIwZnixGTRNEMYLNvcREvJYwwS6hODgfXL0HHLpw15uL76Jreg1vgRoBRS09oo1hkNMObtMVTt+sLH6ZNwKaq2AO+lmcUq30+2LcOJ3N3WOogQoFlPGeA5BGmLRIIpaGUrWnyZ/yLhPO5JjQyY4L4c3lTFNPjjv5V1/LMM1TOCGh+i73pMPWnp1Z3Gie6PXJsJoQTm9GsJKr1xuDiQgdvvaVolIDuOfDyyqri/osfBnioAXyro8ZEXNzJHHXHCU="
           on:
             tags: true
-            rvm: 2.4.1
+            rvm: 2.4.4
             condition: '($SKIP_FORGE_PUBLISH != true)'

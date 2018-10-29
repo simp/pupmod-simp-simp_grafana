@@ -11,19 +11,11 @@ describe 'The fake Elasticsearch server' do
   before(:all) do
     default_hieradata   = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
     es_server_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'elasticsearch_server.yaml.erb'))).result(binding)
-
-    # NOTE: The `context` terminus is for per-context blocks.  If used, be sure
-    # it is filled with an empty YAML document (`---\n`) in the `after(:all)`
-    # hook for the context so it doesn't effect subsequent contexts.
-    write_hiera_config_on elasticsearch_server, %W(context #{fqdn} default)
-
-    write_hieradata_to elasticsearch_server, default_hieradata, 'default'
-    write_hieradata_to elasticsearch_server, es_server_hieradata, fqdn
-    write_hieradata_to elasticsearch_server, "---\n", 'context'
-
-    hosts.each do |host|
-      on(host, 'ifup eth1')
+    data = YAML.load(default_hieradata).merge(YAML.load(es_server_hieradata))
+    if elasticsearch_server.host_hash[:platform] =~ /el-6/
+      data['java::package'] = 'java-1.8.0-openjdk-devel'
     end
+    write_hieradata_to(elasticsearch_server, data)
   end
 
   let(:es_server_manifest) { File.open(File.join(FIXTURE_DIR, 'manifests', 'elasticsearch_server.pp')).read }

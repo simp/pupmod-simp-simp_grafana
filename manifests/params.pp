@@ -11,7 +11,7 @@ class simp_grafana::params {
   $firewall     = simplib::lookup('simp_options::firewall', { 'default_value' => false })
   $ldap         = simplib::lookup('simp_options::ldap', { 'default_value' => false })
 
-  $admin_pw = passgen('grafana')
+  $admin_pw = simplib::passgen('grafana')
 
   $app_pki_dir             = '/etc/pki/simp_apps/grafana/x509'
   $app_pki_key             = "${app_pki_dir}/private/${facts['fqdn']}.pem"

@@ -1,3 +1,8 @@
+* Mon Oct 29 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 1.0.6-0
+- Fix bug in resource ordering of pki::copy and grafana::service
+- Use simplib::passgen() in lieu of deprecated passgen()
+- Update badges and contribution guide URL in README.md
+
 * Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.0.6-0
 - Updated $app_pki_external_source to accept any string. This matches the
   functionality of pki::copy.

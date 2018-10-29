@@ -11,19 +11,13 @@ grafana              = only_host_with_role(hosts, 'grafana')
 grafana_fqdn         = fact_on(grafana, 'fqdn')
 grafana_port         = "8443"
 
+default_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
+grafana_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding)
+data = YAML.load(default_hieradata).merge(YAML.load(grafana_hieradata))
+
 describe 'the grafana server' do
   before(:all) do
-    default_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
-    grafana_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding)
-
-    # NOTE: The `context` terminus is for per-context blocks.  If used, be sure
-    # it is filled with an empty YAML document (`---\n`) in the `after(:all)`
-    # hook for the context so it doesn't effect subsequent contexts.
-    write_hiera_config_on grafana, %W(context #{grafana_fqdn} default)
-
-    write_hieradata_to grafana, default_hieradata, 'default'
-    write_hieradata_to grafana, grafana_hieradata, grafana_fqdn
-    write_hieradata_to grafana, "---\n", 'context'
+    write_hieradata_to(grafana, data)
 
     # This would normally be required on the Puppet compile masters.
     if grafana[:type] == 'aio'
@@ -184,10 +178,9 @@ describe 'the grafana server' do
 
   context 'with LDAP enabled via the global catalyst' do
     before(:all) do
-      context_hieradata = "---\nsimp_options::ldap: true"
-      write_hieradata_to grafana, context_hieradata, 'context'
+      write_hieradata_to(grafana, data.merge({'simp_options::ldap' => true}))
     end
-    after(:all) { write_hieradata_to grafana, "---\n", 'context' }
+
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
@@ -386,16 +379,12 @@ describe 'the grafana server' do
   context 'when the `::grafana::package_source` is set to a local file' do
     before(:all) do
       context_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana_local_package.yaml.erb'))).result(binding)
-      write_hieradata_to grafana, context_hieradata, 'context'
+      write_hieradata_to(grafana, data.merge(YAML.load(context_hieradata)))
 
       on(grafana, 'yum remove -y grafana')
       grafana.install_package('yum-utils')
       on(grafana, 'cd /tmp; yumdownloader grafana')
       on(grafana, 'cd /tmp; mv grafana-*.rpm grafana_package.x86_64.rpm')
-
-      hosts.each do |host|
-        on(host, 'ifup eth1')
-      end
     end
 
     let(:manifest) do
