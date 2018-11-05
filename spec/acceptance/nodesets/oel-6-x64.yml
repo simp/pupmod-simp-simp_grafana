@@ -12,7 +12,7 @@ HOSTS:
       - server
       - master
     platform: el-6-x86_64
-    box: centos/6
+    box: onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
     vagrant_memsize: 2048
     yum_repos:
@@ -32,7 +32,7 @@ HOSTS:
       - grafana
       - default
     platform: el-6-x86_64
-    box: centos/6
+    box: onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       grafana:
@@ -55,7 +55,7 @@ HOSTS:
       - agent
       - elasticsearch_server
     platform: el-6-x86_64
-    box: centos/6
+    box: onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
     vagrant_memsize: 1024
     yum_repos:

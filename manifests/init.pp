@@ -169,7 +169,7 @@ class simp_grafana (
 
   if $pki {
     include '::simp_grafana::config::pki'
-    Class['grafana'] -> Class['simp_grafana::config::pki']
+    Class['simp_grafana::config::pki'] ~> Class['grafana::service']
   }
 
   class { '::grafana':

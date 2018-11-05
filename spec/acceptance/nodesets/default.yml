@@ -1,3 +1,10 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
 HOSTS:
   simp-server:
     roles:
@@ -5,8 +12,8 @@ HOSTS:
       - server
       - master
     platform: el-7-x86_64
-    hypervisor: vagrant
     box: centos/7
+    hypervisor: <%= hypervisor %>
     vagrant_memsize: 2048
     yum_repos:
       epel:
@@ -25,8 +32,8 @@ HOSTS:
       - grafana
       - default
     platform: el-7-x86_64
-    hypervisor: vagrant
     box: centos/7
+    hypervisor: <%= hypervisor %>
     yum_repos:
       grafana:
         url: https://packagecloud.io/grafana/stable/el/7/$basearch
@@ -48,8 +55,8 @@ HOSTS:
       - agent
       - elasticsearch_server
     platform: el-7-x86_64
-    hypervisor: vagrant
     box: centos/7
+    hypervisor: <%= hypervisor %>
     vagrant_memsize: 1024
     yum_repos:
       epel:
@@ -66,3 +73,6 @@ CONFIG:
   type: aio
   vagrant_memsize: 256
   synced_folder: disabled
+<% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
+  puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
+<% end -%>

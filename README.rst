@@ -1,4 +1,4 @@
-|License| |Build Status| |SIMP compatibility|
+|License| |CII Best Practices| |Puppet Forge| |Puppet Forge Downloads| |Build Status|
 
 Table of Contents
 -----------------
@@ -33,16 +33,11 @@ This is a SIMP module
 ---------------------
 
 This module is a component of the
-`System Integrity Management Platform <https://github.com/NationalSecurityAgency/SIMP>`__,
+`System Integrity Management Platform <https://simp-project.com>`__, a
 a compliance-management framework built on Puppet.
 
 If you find any issues, they can be submitted to our
 `JIRA <https://simp-project.atlassian.net/>`__.
-
-Please read our
-`Contribution Guide <https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP>`__
-and visit our
-`developer wiki <https://simp-project.atlassian.net/wiki/display/SD/SIMP+Development+Home>`__.
 
 This module is optimally designed for use within a larger SIMP ecosystem, but
 it can be used independently:
@@ -186,8 +181,7 @@ This module has only been tested on CentOS 7 and Red Hat Enterprise Linux 7.
 Development
 -----------
 
-Please see the
-`SIMP Contribution Guidelines <https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP>`__.
+Please read our `Contribution Guide <http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html>`__.
 
 Acceptance tests
 ^^^^^^^^^^^^^^^^
@@ -230,7 +224,11 @@ Some environment variables may be useful:
 
 .. |License| image:: http://img.shields.io/license-apache-blue.svg
    :target: http://www.apache.org/licenses/LICENSE-2.0.html
+.. |CII Best Practices| image:: https://bestpractices.coreinfrastructure.org/projects/73/badge
+   :target: https://bestpractices.coreinfrastructure.org/projects/73
+.. |Puppet Forge| image:: https://img.shields.io/puppetforge/v/simp/simp_grafana.svg
+   :target: https://forge.puppetlabs.com/simp/simp_grafana
+.. |Puppet Forge Downloads| image:: https://img.shields.io/puppetforge/dt/simp/simp_grafana.svg
+   :target: https://forge.puppetlabs.com/simp/simp_grafana
 .. |Build Status| image:: https://travis-ci.org/simp/pupmod-simp-simp_grafana.svg
    :target: https://travis-ci.org/simp/pupmod-simp-simp_grafana
-.. |SIMP compatibility| image:: https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg
-   :target: https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg
