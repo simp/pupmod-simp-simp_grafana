@@ -4,13 +4,11 @@ test_name 'fake_simp_server'
 
 simp_server = only_host_with_role(hosts, 'simp_server')
 
-default_hieradata     = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
-simp_server_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'simp_server.yaml.erb'))).result(binding)
-
-data = YAML.load(default_hieradata).merge(YAML.load(simp_server_hieradata))
-
 describe 'The fake SIMP server' do
   before(:all) do
+    default_hieradata     = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
+    simp_server_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'simp_server.yaml.erb'))).result(binding)
+    data = YAML.load(default_hieradata).merge(YAML.load(simp_server_hieradata))
     write_hieradata_to(simp_server, data)
   end
 

@@ -13,7 +13,6 @@ grafana_port         = "8443"
 
 default_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
 grafana_hieradata = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'grafana.yaml.erb'))).result(binding)
-
 data = YAML.load(default_hieradata).merge(YAML.load(grafana_hieradata))
 
 describe 'the grafana server' do
@@ -31,7 +30,11 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'security' => { 'admin_password' => 'admin' } },
+          cfg => {
+            'security' => {
+              'admin_password' => 'admin'
+            }
+          },
         }
       EOS
     end
@@ -110,7 +113,11 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { 'enabled' => true } },
+          cfg => {
+            'auth.basic' => {
+              'enabled' => true
+            }
+          },
         }
       EOS
     end
@@ -165,30 +172,15 @@ describe 'the grafana server' do
     before(:all) do
       write_hieradata_to(grafana, data.merge({'simp_options::ldap' => true}))
     end
+
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { 'enabled' => true } },
-        }
-      EOS
-    end
-
-    it 'applies without errors' do
-      apply_manifest_on(grafana, manifest, :catch_failures => true)
-    end
-
-    it 'is idempotent' do
-      apply_manifest_on(grafana, manifest, :catch_changes => true)
-    end
-
-    it_behaves_like 'an LDAP-enabled server'
-  end
-
-  context 'with LDAP enabled in the manifest (auth.ldap variable)' do
-    let(:manifest) do
-      <<-EOS
-        class { 'simp_grafana':
-          cfg  => { 'auth.basic' => { 'enabled' => true }, 'auth.ldap' => { 'enabled' => true } },
+          cfg => {
+            'auth.basic' => {
+              'enabled' => true
+            }
+          },
         }
       EOS
     end
@@ -208,9 +200,12 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          ldap => true,
-          cfg  => { 'auth.basic' => { 'enabled' => true } },
+          cfg => {
+            'auth.basic' => { 'enabled' => true },
+            'auth.ldap'  => { 'enabled' => true }
+          },
         }
+
       EOS
     end
 
@@ -369,10 +364,6 @@ describe 'the grafana server' do
       grafana.install_package('yum-utils')
       on(grafana, 'cd /tmp; yumdownloader grafana')
       on(grafana, 'cd /tmp; mv grafana-*.rpm grafana_package.x86_64.rpm')
-
-      hosts.each do |host|
-        on(host, 'ifup eth1')
-      end
     end
 
     let(:manifest) do

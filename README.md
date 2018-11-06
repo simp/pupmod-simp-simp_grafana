@@ -1,8 +1,8 @@
 [![License](http://img.shields.io/license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Build
-Status](https://travis-ci.org/simp/pupmod-simp-simp_grafana.svg)](https://travis-ci.org/simp/pupmod-simp-simp_grafana)
-[![SIMP
-compatibility](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/73/badge)](https://bestpractices.coreinfrastructure.org/projects/73)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/simp/simp_grafana.svg)](https://forge.puppetlabs.com/simp/simp_grafana)
+[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/simp/simp_grafana.svg)](https://forge.puppetlabs.com/simp/simp_grafana)
+[![Build Status](https://travis-ci.org/simp/pupmod-simp-simp_grafana.svg)](https://travis-ci.org/simp/pupmod-simp-simp_grafana)
 
 Table of Contents
 =================
@@ -108,7 +108,7 @@ them, simply enable `simp_options::ldap`.
 ```puppet
 # Manifest
 
-include '::simp_grafana'
+include 'simp_grafana'
 ```
 
 ```yaml
@@ -154,7 +154,7 @@ temporary directory. Here is an example:
 ```puppet
 # Manifest
 
-include '::simp_grafana'
+include 'simp_grafana'
 
 file { '/tmp/grafana_package.rpm':
   ensure => file,
@@ -178,8 +178,8 @@ for the most up-to-date documentation.
 Limitations
 ===========
 
-This module has only been tested on CentOS 7 and Red Hat Enterprise
-Linux 7.
+This module has only been tested on CentOS 7, Red Hat Enterprise
+Linux 7, and Oracle 7.
 
 Development
 ===========
