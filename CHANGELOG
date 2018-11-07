@@ -1,6 +1,6 @@
 * Wed Nov 07 2018 Scott Armiger <scott.armiger@onyxpoint.com> - 1.1.0-0
-- Fixed a bug in params.pp where it was attempting to configure ldap variables
-even when $ldap was set to false.
+- Fixed a bug in params.pp where it was attempting to configure ldap
+  variables even when $ldap was set to false.
 - Updated to use data in modules when applicable, and remove params.pp
 - No longer support Puppet less than 4.10.4
 - Minor changes
@@ -24,16 +24,16 @@ even when $ldap was set to false.
     - $admin_pw
     - $ldap_verbose_logging
 
-* Mon Oct 29 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 1.0.6-0
+* Mon Oct 29 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 1.1.0-0
 - Fix bug in resource ordering of pki::copy and grafana::service
 - Use simplib::passgen() in lieu of deprecated passgen()
 - Update badges and contribution guide URL in README.md
 
-* Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.0.6-0
+* Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 1.1.0-0
 - Updated $app_pki_external_source to accept any string. This matches the
   functionality of pki::copy.
 
-* Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 1.0.6-0
+* Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 1.1.0-0
 - Update systemd fixtures and CI assets
 - Add support for Puppet 5 and OEL
 
