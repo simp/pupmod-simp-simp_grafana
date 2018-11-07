@@ -31,9 +31,7 @@ describe 'the grafana server' do
       <<-EOS
         class { 'simp_grafana':
           cfg => {
-            'security' => {
-              'admin_password' => 'admin'
-            }
+            'security' => { 'admin_password' => 'admin' }
           },
         }
       EOS
@@ -114,9 +112,7 @@ describe 'the grafana server' do
       <<-EOS
         class { 'simp_grafana':
           cfg => {
-            'auth.basic' => {
-              'enabled' => true
-            }
+            'auth.basic' => { 'enabled' => true }
           },
         }
       EOS
@@ -177,9 +173,7 @@ describe 'the grafana server' do
       <<-EOS
         class { 'simp_grafana':
           cfg => {
-            'auth.basic' => {
-              'enabled' => true
-            }
+            'auth.basic' => { 'enabled' => true }
           },
         }
       EOS
@@ -224,7 +218,10 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg      => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          cfg      => {
+            'auth.basic' => { enabled => true },
+            'auth.ldap'  => { enabled => true }
+          },
           ldap_cfg => {
             'verbose_logging' => true,
             'servers'         => [

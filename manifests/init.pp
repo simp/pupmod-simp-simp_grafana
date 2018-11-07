@@ -166,7 +166,11 @@ class simp_grafana (
   Array[Simplib::URI,1]         $ldap_urls               = simplib::lookup('simp_options::ldap::uri', { 'default_value' => undef } )
 ) {
 
-  $_simp_ldap_server_name = split($ldap_urls[0], 'ldap://')[1]
+  # Grafana only accepts the hostname of the ldap server, so in order to take
+  # advantage of the `simp_options` ldap server list, the hostname will have
+  # to be extracted.
+  # Grafana also only allows one configured ldap server.
+  $_simp_ldap_server_name = split($ldap_urls[0], '://')[1]
   $_simp_ldap_server = $simp_ldap_conf + {
     # add options that override or are not avilable in hiera
     'bind_dn'               => $bind_dn,
