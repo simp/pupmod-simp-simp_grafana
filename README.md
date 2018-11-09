@@ -128,7 +128,7 @@ be found in the 6\_X\_Dependencies yum repo, available on
 Install this package using yum:
 
 ```shell
-yum install -y rubygem-puppetserver-toml`
+yum install -y rubygem-puppetserver-toml
 ```
 
 >At present the module does not support config merging of servers in the
