@@ -135,6 +135,49 @@ yum install -y rubygem-puppetserver-toml`
 `ldap_cfg` parameter, so if any changes are made to the default server,
 the entire server must be configured.
 
+LDAP Config Settings
+--------------------
+SIMP utilizes 'smart' defaults to configure LDAP. If you are looking to utilize
+a custom LDAP configuration, you can do so by using the `$ldap_cfg` variable.
+The defaults will also not be used if `$ldap` or `simp_options::ldap` is false.
+Make sure all needed options are set if specifying a custom `$ldap_cfg`.
+
+Example:
+```
+class { 'simp_grafana':
+  firewall        => true,
+  pki             => true,
+  trusted_nets    => ['10.255.0.0/16'],
+  cfg             => { 'auth.ldap' => { enabled => true } },
+  ldap_cfg        => {
+    verbose_logging => true,
+    servers         => [
+      {
+      host                  => 'ldap.example.com',
+      port                  => 636,
+      use_ssl               => true,
+      bind_dn               => 'uid=grafana,ou=Services,dc=test',
+      bind_password         => '123$%^qweRTY',
+      search_filter         => '(uid=%s)',
+      search_base_dns       => ['ou=People,dc=test'],
+      group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
+      group_search_base_dns => ['ou=Group,dc=test'],
+      attributes            => {
+        name                => 'givenName',
+        surname   => 'sn',
+        username  => 'uid',
+        member_of => 'gidNumber',
+        email     => 'mail',
+        },
+      group_mappings => [
+        { group_dn => 'admin', org_role => 'Admin'  },
+        { group_dn => '50001', org_role => 'Editor' },
+        ],
+      },
+    ],
+  },
+}
+```
 
 Network-isolated Setup
 ----------------------

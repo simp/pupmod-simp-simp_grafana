@@ -10,6 +10,22 @@
 #  `simp_options::ldap` is false. Make sure all needed options are set if
 #  specifying a custom $ldap_cfg.
 #
+# @note SIMP LDAP smart defaults
+# SIMP LDAP smart defaults will automatically be used unless one of the following are met:
+#   * $ldap_cfg is set and not empty
+#   * $ldap == true OR $cfg['auth.ldap'] == {'enabled' => true}
+#
+# smart defaults are provided by the following parameters:
+#   * $bind_dn
+#   * $bind_pw
+#   * $base_dn
+#   * $simp_ldap_server_namehost
+#
+# If you are using a custom LDAP server, you MUST provide these settings in the $ldap_cfg hash,
+# along with the 'verbose_logging' setting, as there is no merge between your custom settings
+# and smart defaults. An example of the $ldap_cfg param and it's required settings can be seen in
+# the Resource-style class declaration example at the end of the comments.
+#
 # # Welcome to SIMP!
 #
 # This module is a component of the System Integrity Management Platform (SIMP),
@@ -140,6 +156,7 @@
 #
 # @author https://github.com/simp/pupmod-simp-simp_grafana/graphs/contributors
 #
+
 class simp_grafana (
   Hash                          $default_cfg,
   Hash                          $cfg,
@@ -166,13 +183,15 @@ class simp_grafana (
   Array[Simplib::URI,1]         $ldap_urls               = simplib::lookup('simp_options::ldap::uri', { 'default_value' => undef } )
 ) {
 
+  simplib::assert_metadata($module_name)
+
   # Grafana only accepts the hostname of the ldap server, so in order to take
   # advantage of the `simp_options` ldap server list, the hostname will have
   # to be extracted.
   # Grafana also only allows one configured ldap server.
   $_simp_ldap_server_name = split($ldap_urls[0], '://')[1]
   $_simp_ldap_server = $simp_ldap_conf + {
-    # add options that override or are not avilable in hiera
+    # add options that override or are not available in hiera
     'bind_dn'               => $bind_dn,
     'bind_password'         => $bind_pw,
     'group_search_base_dns' => ["ou=Group,${base_dn}"],
