@@ -2,29 +2,29 @@
 # Grafana module written by Bill Fraser and maintained by Vox Pupuli.  It sets
 # baseline of secure defaults and integrates Grafana with other SIMP components.
 #
-# @note If SIMP integration is not required, direct use of the component Grafana
+# > NOTE: If SIMP integration is not required, direct use of the component Grafana
 #   module is advised.
 #
-# @note If providing LDAP configuration via $ldap_cfg, SIMP's smart defaults
+# > NOTE: If providing LDAP configuration via $ldap_cfg, SIMP's smart defaults
 #   will not be used. The defaults will also not be used if $ldap or
-#  `simp_options::ldap` is false. Make sure all needed options are set if
-#  specifying a custom $ldap_cfg.
+#   `simp_options::ldap` is false. Make sure all needed options are set if
+#   specifying a custom $ldap_cfg.
 #
-# @note SIMP LDAP smart defaults
-# SIMP LDAP smart defaults will automatically be used unless one of the following are met:
-#   * $ldap_cfg is set and not empty
-#   * $ldap == true OR $cfg['auth.ldap'] == {'enabled' => true}
+# > NOTE: SIMP LDAP smart defaults
+#   SIMP LDAP smart defaults will automatically be used unless one of the following are met:
+#     * $ldap_cfg is set and not empty
+#     * $ldap == true OR $cfg['auth.ldap'] == {'enabled' => true}
 #
-# smart defaults are provided by the following parameters:
-#   * $bind_dn
-#   * $bind_pw
-#   * $base_dn
-#   * $simp_ldap_server_namehost
+#   Smart defaults are provided by the following parameters:
+#     * $bind_dn
+#     * $bind_pw
+#     * $base_dn
+#     * $simp_ldap_server_namehost
 #
-# If you are using a custom LDAP server, you MUST provide these settings in the $ldap_cfg hash,
-# along with the 'verbose_logging' setting, as there is no merge between your custom settings
-# and smart defaults. An example of the $ldap_cfg param and it's required settings can be seen in
-# the Resource-style class declaration example at the end of the comments.
+#   If you are using a custom LDAP server, you MUST provide these settings in the $ldap_cfg hash,
+#   along with the 'verbose_logging' setting, as there is no merge between your custom settings
+#   and smart defaults. An example of the $ldap_cfg param and it's required settings can be seen in
+#   the Resource-style class declaration example at the end of the comments.
 #
 # # Welcome to SIMP!
 #
@@ -156,7 +156,6 @@
 #
 # @author https://github.com/simp/pupmod-simp-simp_grafana/graphs/contributors
 #
-
 class simp_grafana (
   Hash                          $default_cfg,
   Hash                          $cfg,
