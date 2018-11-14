@@ -26,20 +26,6 @@
 #   and smart defaults. An example of the $ldap_cfg param and it's required settings can be seen in
 #   the Resource-style class declaration example at the end of the comments.
 #
-# # Welcome to SIMP!
-#
-# This module is a component of the System Integrity Management Platform (SIMP),
-# a managed security compliance framework built on Puppet.
-#
-# This module is optimally designed for use within a larger SIMP ecosystem, but
-# it can be used independently:
-#
-# * As a SIMP wrapper module, the defaults use the larger SIMP ecosystem to
-#   manage security compliance settings from the Puppet server.
-#
-# * If used independently, all SIMP-managed security subsystems may be disabled
-#   via the `firewall` and `pki` settings.
-#
 # @param trusted_nets A whitelist of subnets
 #   (in CIDR notation) permitted access.
 #

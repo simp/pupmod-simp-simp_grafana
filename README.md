@@ -47,7 +47,7 @@ ecosystem, but it can be used independently:
 - As a SIMP wrapper module, the defaults use the larger SIMP ecosystem
   to manage security compliance settings from the Puppet server.
 - If used independently, all SIMP-managed security subsystems may be
-  disabled via the `simp_options::firewall` and `simp_options::pki`
+  disabled via the `simp_options::firewall`, `simp_options::pki`, and `simp_options::ldap`
   settings.
 
 
@@ -97,9 +97,9 @@ grafana::install_method: package
 LDAP configuration
 ------------------
 
-LDAP authentication is disabled by default, but defaults are pre-seeded
-for the SIMP OpenLDAP server using the SIMP-standard Hiera keys. To use
-them, simply enable `simp_options::ldap`.
+By default, while on a standard SIMP installation, LDAP authentication is enabled. However, installing 
+this module on it's own will disable LDAP authentiaction by default, but defaults are pre-seeded for the SIMP OpenLDAP
+server using the SIMP-standard Hiera keys. To use them, simply enable `simp_options::ldap`.
 
 ```puppet
 # Manifest
@@ -112,6 +112,14 @@ include 'simp_grafana'
 ---
 simp_options::ldap: true
 ```
+
+Other `simp_options::ldap` settings will be required for this module to work outside of a SIMP installation, including:
+* `simp_options::ldap::base_dn`
+* `simp_options::ldap::bind_dn`
+* `simp_options::ldap::bind_pw`
+* `simp_options::pki`
+* `simp_options::pki::source`
+* `simp_options::ldap::uri`
 
 This will also set up default group mappings for groups with the CNs:
 * `simp_grafana_admins`
