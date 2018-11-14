@@ -1,10 +1,9 @@
----
 # This file provides a common set of Hieradata for all tests.
 #
 # NOTE: All passwords are '123$%^qweRTY'
 
 # Test networks *should* be secure, but just in case, enable IPTables.
-simp_options::firewall : true
+simp_options::firewall: true
 
 # IPv4 networks to allow using SIMP defaults.  (CIDR notation or `ALL`)
 # Set to Beaker, Vagrant & Libvirt defaults, plus the loopback network.
@@ -17,17 +16,37 @@ simp_options::trusted_nets:
 <% simp_server ||= only_host_with_role(hosts, 'simp_server') %>
 
 # LDAP settings
-simp_options::ldap::base_dn         : "dc=test"
-simp_options::ldap::bind_dn         : "cn=hostAuth,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
-simp_options::ldap::bind_pw         : "123$%^qweRTY"
-simp_options::ldap::bind_hash       : "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
-simp_options::ldap::sync_dn         : "cn=LDAPSync,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
-simp_options::ldap::sync_pw         : "123$%^qweRTY"
-simp_options::ldap::sync_hash       : "{SSHA}xr8JTXnSdOlqFJfP6tNwDNmGfGKKhdbr"
-simp_options::ldap::root_dn         : "cn=LDAPAdmin,ou=People,%{hiera('simp_options::ldap::base_dn')}"
-simp_openldap::server::conf::rootpw : "{SSHA}cbyG41/oc3qhJkUpkrjqz60ZUizBxTHJ"
-simp_options::ldap::master          : "ldap://<%= simp_server.reachable_name %>"
-simp_options::pki                   : true
-simp_options::pki::source           : "/etc/pki/simp-testing/pki"
+simp_options::ldap::base_dn: "dc=test"
+simp_openldap::base_dn: "dc=test"
+simp_options::ldap::bind_dn: "cn=hostAuth,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
+simp_openldap::bind_dn: "cn=hostAuth,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
+simp_options::ldap::bind_pw: "123$%^qweRTY"
+simp_options::ldap::bind_hash: "{SSHA}Tva27L86sfTyLS059Es0S4lsHEzvevIH"
+simp_options::ldap::sync_dn: "cn=LDAPSync,ou=Hosts,%{hiera('simp_options::ldap::base_dn')}"
+simp_options::ldap::sync_pw: "123$%^qweRTY"
+simp_options::ldap::sync_hash: "{SSHA}xr8JTXnSdOlqFJfP6tNwDNmGfGKKhdbr"
+simp_options::ldap::root_dn: "cn=LDAPAdmin,ou=People,%{hiera('simp_options::ldap::base_dn')}"
+simp_openldap::server::conf::rootpw: "{SSHA}cbyG41/oc3qhJkUpkrjqz60ZUizBxTHJ"
+simp_options::ldap::master: "ldap://<%= simp_server.reachable_name %>"
+simp_options::pki: true
+simp_options::pki::source: "/etc/pki/simp-testing/pki"
 simp_options::ldap::uri:
-    - "ldap://<%= simp_server.reachable_name %>"
+  - "ldap://<%= simp_server.reachable_name %>"
+
+sudo::user_specifications:
+  vagrant_all:
+    user_list:
+    - vagrant
+    cmnd:
+    - ALL
+    passwd: false
+pam::access::users:
+  defaults:
+    origins:
+    - ALL
+    permission: "+"
+  vagrant:
+ssh::server::conf::permitrootlogin: true
+ssh::server::conf::authorizedkeysfile: ".ssh/authorized_keys"
+iptables::ports:
+  22:

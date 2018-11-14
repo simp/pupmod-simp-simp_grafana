@@ -8,7 +8,7 @@
 class simp_grafana::config::pki {
   assert_private()
 
-  ::pki::copy { 'grafana':
+  pki::copy { 'grafana':
     source => $::simp_grafana::app_pki_external_source,
     pki    => $::simp_grafana::pki,
     group  => 'grafana',

@@ -5,8 +5,6 @@ test_name 'fake_elasticsearch_server'
 
 elasticsearch_server = only_host_with_role(hosts, 'elasticsearch_server')
 
-fqdn = fact_on(elasticsearch_server, 'fqdn')
-
 describe 'The fake Elasticsearch server' do
   before(:all) do
     default_hieradata   = ERB.new(File.read(File.join(FIXTURE_DIR, 'hieradata', 'default.yaml.erb'))).result(binding)
@@ -29,15 +27,15 @@ describe 'The fake Elasticsearch server' do
   it 'installs without errors' do
     # We must do this twice before it becomes idempotent due to a bug in
     # pupmod-simp-iptables with SELinux
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_failures => true
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_failures => true
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_failures => true)
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_failures => true)
   end
 
   it 'executes Puppet idempotently' do
-    apply_manifest_on elasticsearch_server, es_server_manifest, :catch_changes => true
+    apply_manifest_on(elasticsearch_server, es_server_manifest, :catch_changes => true)
   end
 
   it 'populates with fake data' do
-    curl_on elasticsearch_server, curl_args
+    curl_on(elasticsearch_server, curl_args)
   end
 end

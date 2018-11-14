@@ -1,0 +1,14 @@
+---
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+
+hierarchy:
+  - name: "fqdn"
+    paths:
+      - "%{facts.fqdn}.yaml"
+      - "%{facts.hostname}.yaml"
+
+  - name: "Common data"
+    path: "common.yaml"

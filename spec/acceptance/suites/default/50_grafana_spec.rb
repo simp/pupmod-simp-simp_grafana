@@ -20,11 +20,7 @@ describe 'the grafana server' do
     write_hieradata_to(grafana, data)
 
     # This would normally be required on the Puppet compile masters.
-    if grafana[:type] == 'aio'
-      on(grafana, '/opt/puppetlabs/bin/puppet resource package toml ensure=present provider=puppet_gem')
-    else
-      grafana.install_package('rubygem-toml')
-    end
+    on(grafana, '/opt/puppetlabs/bin/puppet resource package toml ensure=present provider=puppet_gem')
   end
 
   let(:curl_base_args) { '--cacert /etc/pki/simp-testing/pki/cacerts/cacerts.pem ' }
@@ -34,13 +30,9 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { security => { admin_password => 'admin' } },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
+          cfg => {
+            'security' => { 'admin_password' => 'admin' }
+          },
         }
       EOS
     end
@@ -119,13 +111,9 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { enabled => true } },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
+          cfg => {
+            'auth.basic' => { 'enabled' => true }
+          },
         }
       EOS
     end
@@ -184,13 +172,9 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { enabled => true } },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
+          cfg => {
+            'auth.basic' => { 'enabled' => true }
+          },
         }
       EOS
     end
@@ -206,18 +190,16 @@ describe 'the grafana server' do
     it_behaves_like 'an LDAP-enabled server'
   end
 
-  context 'with LDAP enabled in the manifest' do
+  context 'with LDAP enabled in the manifest (ldap variable)' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          cfg => {
+            'auth.basic' => { 'enabled' => true },
+            'auth.ldap'  => { 'enabled' => true }
+          },
         }
 
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
-        }
       EOS
     end
 
@@ -236,41 +218,38 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg      => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          cfg      => {
+            'auth.basic' => { enabled => true },
+            'auth.ldap'  => { enabled => true }
+          },
           ldap_cfg => {
-            verbose_logging => true,
-            servers         => [
+            'verbose_logging' => true,
+            'servers'         => [
               {
-                host                  => '#{simp_fqdn}',
-                port                  => 636,
-                use_ssl               => true,
-                ssl_skip_verify       => true,
-                bind_dn               => 'uid=grafana,ou=Services,dc=test',
-                bind_password         => '123$%^qweRTY',
-                search_filter         => '(uid=%s)',
-                search_base_dns       => ['ou=People,dc=test'],
-                group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
-                group_search_base_dns => ['ou=Group,dc=test'],
-                attributes            => {
-                  name      => 'givenName',
-                  surname   => 'sn',
-                  username  => 'uid',
-                  member_of => 'gidNumber',
-                  email     => 'mail',
+                'host'                  => '#{simp_fqdn}',
+                'port'                  => 636,
+                'use_ssl'               => true,
+                'ssl_skip_verify'       => true,
+                'bind_dn'               => 'uid=grafana,ou=Services,dc=test',
+                'bind_password'         => '123$%^qweRTY',
+                'search_filter'         => '(uid=%s)',
+                'search_base_dns'       => ['ou=People,dc=test'],
+                'group_search_filter'   => '(&(objectClass=posixGroup)(memberUid=%s))',
+                'group_search_base_dns' => ['ou=Group,dc=test'],
+                'attributes'            => {
+                  'name'      => 'givenName',
+                  'surname'   => 'sn',
+                  'username'  => 'uid',
+                  'member_of' => 'gidNumber',
+                  'email'     => 'mail',
                 },
-                group_mappings => [
-                  { group_dn => '50000', org_role => 'Admin'  },
-                  { group_dn => '50001', org_role => 'Editor' },
+                'group_mappings' => [
+                  { 'group_dn' => '50000', 'org_role' => 'Admin'  },
+                  { 'group_dn' => '50001', 'org_role' => 'Editor' },
                 ],
               },
             ],
           },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
         }
       EOS
     end
@@ -290,41 +269,38 @@ describe 'the grafana server' do
     let(:manifest) do
       <<-EOS
         class { 'simp_grafana':
-          cfg             => { 'auth.basic' => { enabled => true }, 'auth.ldap' => { enabled => true } },
+          cfg             => {
+            'auth.basic' => { 'enabled' => true },
+            'auth.ldap'  => { 'enabled' => true }
+          },
           ldap_cfg        => {
-            verbose_logging => true,
-            servers         => [
+            'verbose_logging' => true,
+            'servers'         => [
               {
-                host                  => '#{simp_fqdn}',
-                port                  => 636,
-                use_ssl               => true,
-                ssl_skip_verify       => true,
-                bind_dn               => 'uid=grafana,ou=Services,dc=test',
-                bind_password         => '123$%^qweRTY',
-                search_filter         => '(uid=%s)',
-                search_base_dns       => ['ou=People,dc=test'],
-                group_search_filter   => '(&(objectClass=posixGroup)(memberUid=%s))',
-                group_search_base_dns => ['ou=Group,dc=test'],
-                attributes            => {
-                  name      => 'givenName',
-                  surname   => 'sn',
-                  username  => 'uid',
-                  member_of => 'gidNumber',
-                  email     => 'mail',
+                'host'                  => '#{simp_fqdn}',
+                'port'                  => 636,
+                'use_ssl'               => true,
+                'ssl_skip_verify'       => true,
+                'bind_dn'               => 'uid=grafana,ou=Services,dc=test',
+                'bind_password'         => '123$%^qweRTY',
+                'search_filter'         => '(uid=%s)',
+                'search_base_dns'       => ['ou=People,dc=test'],
+                'group_search_filter'   => '(&(objectClass=posixGroup)(memberUid=%s))',
+                'group_search_base_dns' => ['ou=Group,dc=test'],
+                'attributes'            => {
+                  'name'      => 'givenName',
+                  'surname'   => 'sn',
+                  'username'  => 'uid',
+                  'member_of' => 'gidNumber',
+                  'email'     => 'mail',
                 },
-                group_mappings => [
-                  { group_dn => '50000', org_role => 'Admin'  },
-                  { group_dn => '50001', org_role => 'Editor' },
+                'group_mappings' => [
+                  { 'group_dn' => '50000', 'org_role' => 'Admin'  },
+                  { 'group_dn' => '50001', 'org_role' => 'Editor' },
                 ],
               },
             ],
           },
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
         }
 
         # This datasource represents how we would typically
@@ -348,10 +324,10 @@ describe 'the grafana server' do
           database          => '[logstash-]YYYY.MM.DD',
           is_default        => true,
           json_data         => {
-            esVersion     => 5,
-            timeField     => '@timestamp',
-            interval      => 'Daily',
-            tlsSkipVerify => true,
+            'esVersion'     => 5,
+            'timeField'     => '@timestamp',
+            'interval'      => 'Daily',
+            'tlsSkipVerify' => true,
           },
           require => Class['::grafana::service'],
         }
@@ -359,11 +335,11 @@ describe 'the grafana server' do
     end
 
     it 'applies without errors' do
-      apply_manifest_on grafana, manifest, :catch_failures => true
+      apply_manifest_on(grafana, manifest, :catch_failures => true)
     end
 
     it 'is idempotent' do
-      apply_manifest_on grafana, manifest, :catch_changes => true
+      apply_manifest_on(grafana, manifest, :catch_changes => true)
     end
 
     it 'communicates with Elasticsearch' do
@@ -391,12 +367,6 @@ describe 'the grafana server' do
       <<-EOS
         class { 'simp_grafana':
           install_method => 'package',
-        }
-
-        # Allow SSH from the standard Vagrant nets
-        iptables::listen::tcp_stateful { 'allow_ssh':
-          trusted_nets => hiera('simp_options::trusted_nets'),
-          dports       => 22,
         }
       EOS
     end
