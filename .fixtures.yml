@@ -1,11 +1,7 @@
 ---
 fixtures:
   repositories:
-    concat:
-      # master is beyond 4.1.1, but has breaking changes to
-      # how fragments are ordered (MODULES-6625)
-      repo: https://github.com/simp/puppetlabs-concat
-      ref: 4.1.1
+    concat: https://github.com/simp/puppetlabs-concat
     elasticsearch:
       repo: https://github.com/simp/puppet-elasticsearch
       ref: 5.5.0
@@ -36,6 +32,9 @@ fixtures:
       repo: https://github.com/simp/puppet-systemd
       branch: simp-master
     tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers
+    vox_selinux:
+      repo: https://github.com/simp/pupmod-voxpupuli-selinux
+      branch: simp-master
 
   symlinks:
     simp_grafana: "#{source_dir}"
