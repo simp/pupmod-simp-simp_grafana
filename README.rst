@@ -181,7 +181,7 @@ This module has only been tested on CentOS 7 and Red Hat Enterprise Linux 7.
 Development
 -----------
 
-Please read our `Contribution Guide <http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html>`__.
+Please read our `Contribution Guide <https://simp.readthedocs.io/en/stable/contributors_guide/index.html>`__.
 
 Acceptance tests
 ^^^^^^^^^^^^^^^^
