@@ -1,78 +1,73 @@
-<%
-  if ENV['BEAKER_HYPERVISOR']
-    hypervisor = ENV['BEAKER_HYPERVISOR']
-  else
-    hypervisor = 'vagrant'
-  end
--%>
+---
 HOSTS:
   simp-server:
     roles:
-      - simp_server
-      - server
-      - master
+    - simp_server
+    - server
+    - master
     platform: el-7-x86_64
     box: centos/7
-    hypervisor: <%= hypervisor %>
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     yum_repos:
       epel:
         mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+        - https://getfedora.org/static/352C64E5.txt
       simp-deps:
         baseurl: https://packagecloud.io/simp-project/6_X_Dependencies/el/7/x86_64
         gpgkeys:
-          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-
+        - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
   grafana:
     roles:
-      - simp_client
-      - agent
-      - grafana
-      - default
+    - simp_client
+    - agent
+    - grafana
+    - default
     platform: el-7-x86_64
     box: centos/7
-    hypervisor: <%= hypervisor %>
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     yum_repos:
       grafana:
         url: https://packagecloud.io/grafana/stable/el/7/$basearch
         gpgkeys:
-          - https://packagecloud.io/gpg.key
-          - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+        - https://packagecloud.io/gpg.key
+        - https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
       epel:
         mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+        - https://getfedora.org/static/352C64E5.txt
       simp-deps:
         baseurl: https://packagecloud.io/simp-project/6_X_Dependencies/el/7/x86_64
         gpgkeys:
-          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-
+        - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
   elasticsearch-server:
     roles:
-      - simp_client
-      - agent
-      - elasticsearch_server
+    - simp_client
+    - agent
+    - elasticsearch_server
     platform: el-7-x86_64
     box: centos/7
-    hypervisor: <%= hypervisor %>
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 1024
     yum_repos:
       epel:
         mirrorlist: https://mirrors.fedoraproject.org/mirrorlist?repo=epel-7&arch=$basearch&country=us
         gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
+        - https://getfedora.org/static/352C64E5.txt
       elasticsearch:
-        baseurl:  https://artifacts.elastic.co/packages/5.x/yum
+        baseurl: https://artifacts.elastic.co/packages/5.x/yum
         gpgkeys:
-          - https://artifacts.elastic.co/GPG-KEY-elasticsearch
-
+        - https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
   type: aio
   vagrant_memsize: 256
   synced_folder: disabled
-<% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
-  puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
-<% end -%>
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
